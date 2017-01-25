@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.RobotDrive.MotorType;
 
 public class Drive {
 	RobotDrive robotDrive;
+	
 	public Drive (int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort){
 		CANTalon fronLeftTalon = new CANTalon (frontLeftPort);
 		CANTalon rearLeftTalon = new CANTalon (rearLeftPort);
@@ -24,7 +25,7 @@ public class Drive {
 		robotDrive.setExpiration(0.1);
 	}
 	public void mecanum (double x, double y, double z){
-		
+		robotDrive.mecanumDrive_Cartesian(x, y, z, 0);
 	}
 	public boolean driveDistance (double xdist, double ydist){
 		return false;
