@@ -16,7 +16,8 @@ public class Robot extends IterativeRobot {
 	final String customAuto = "My Auto";
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
-
+Drive drive;
+OperatorInterface oi;
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -26,6 +27,8 @@ public class Robot extends IterativeRobot {
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
+		drive =  new Drive (0,1,2,3);
+		oi = new OperatorInterface ();
 	}
 
 	/**
@@ -64,17 +67,32 @@ public class Robot extends IterativeRobot {
 	}
 
 	/**
+	 * This function is called when entering operator control
+	 */
+	@Override
+	public void teleopInit() {
+	}
+
+	/**
 	 * This function is called periodically during operator control
 	 */
 	@Override
 	public void teleopPeriodic() {
+		drive.mecanum(oi.getDriveX(), oi.getDriveY(), oi.getDriveZ());
 	}
 
 	/**
-	 * This function is called periodically during test mode
+	 * This function is called when entering disabled
 	 */
 	@Override
-	public void testPeriodic() {
+	public void disabledInit() {
+	}
+
+	/**
+	 * This function is called periodically during disabled
+	 */
+	@Override
+	public void disabledPeriodic() {
 	}
 }
 

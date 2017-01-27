@@ -1,11 +1,15 @@
 package org.usfirst.frc.team292.robot;
 
-public class GearSensor {
+import edu.wpi.first.wpilibj.DigitalInput;
 
-	public GearSensor(int sensorPort){
-		
+public class GearSensor {
+	DigitalInput gearSwitch;
+
+	public GearSensor(int sensorPort) {
+		gearSwitch = new DigitalInput(sensorPort);
 	}
-	public boolean gearPresent(){
-		return false;
+
+	public boolean gearPresent() {
+		return gearSwitch.get();
 	}
 }
