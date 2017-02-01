@@ -2,18 +2,31 @@ package org.usfirst.frc.team292.robot;
 
 import com.ctre.CANTalon;
 
+import edu.wpi.first.wpilibj.Servo;
+
 public class Shooter {
 
 	CANTalon shooterTalon;
-	CANTalon feederTalon;
-	public Shooter(int shooterPort, int feederPort){
-		shooterTalon = new CANTalon (shooterPort);
-		feederTalon = new CANTalon (feederPort);
+	Servo feederServo;
+
+	public Shooter(int shooterPort, int feederPort) {
+		shooterTalon = new CANTalon(shooterPort);
+		feederServo = new Servo(feederPort);
 	}
-	public void enableShooter(boolean enable){
-		
+
+	public void enableShooter() {
+		shooterTalon.set(1);
 	}
-	public void shoot(){
-		
+
+	public void disableShooter() {
+		shooterTalon.set(0);
+	}
+
+	public void shoot(boolean shoot) {
+		if(shoot){
+			feederServo.set(1);
+		}else{
+			feederServo.set(0);
+		}
 	}
 }
