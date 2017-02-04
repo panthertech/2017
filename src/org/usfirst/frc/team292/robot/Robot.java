@@ -1,5 +1,7 @@
 package org.usfirst.frc.team292.robot;
 
+import org.usfirst.frc.team292.robot.auto.AutonomousMode;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,8 +18,10 @@ public class Robot extends IterativeRobot {
 	final String customAuto = "My Auto";
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
-Drive drive;
-OperatorInterface oi;
+	AutonomousMode auto;
+	public Drive drive;
+	public OperatorInterface oi;
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -27,8 +31,8 @@ OperatorInterface oi;
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
-		drive =  new Drive (0,1,2,3);
-		oi = new OperatorInterface ();
+		drive = new Drive(0, 1, 2, 3);
+		oi = new OperatorInterface();
 	}
 
 	/**
@@ -44,10 +48,15 @@ OperatorInterface oi;
 	 */
 	@Override
 	public void autonomousInit() {
-		autoSelected = chooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
+		autoSelected = SmartDashboard.getString("Auto Selector", defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
+
+		switch (autoSelected) {
+		case defaultAuto:
+		default:
+			auto = new AutonomousMode(this);
+			break;
+		}
 	}
 
 	/**
@@ -55,15 +64,7 @@ OperatorInterface oi;
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		switch (autoSelected) {
-		case customAuto:
-			// Put custom auto code here
-			break;
-		case defaultAuto:
-		default:
-			// Put default auto code here
-			break;
-		}
+		auto.periodic();
 	}
 
 	/**
@@ -71,6 +72,7 @@ OperatorInterface oi;
 	 */
 	@Override
 	public void teleopInit() {
+		
 	}
 
 	/**
@@ -86,6 +88,7 @@ OperatorInterface oi;
 	 */
 	@Override
 	public void disabledInit() {
+		
 	}
 
 	/**
@@ -93,6 +96,7 @@ OperatorInterface oi;
 	 */
 	@Override
 	public void disabledPeriodic() {
+		
 	}
 }
 
