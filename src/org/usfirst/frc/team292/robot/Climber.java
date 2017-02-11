@@ -9,7 +9,7 @@ public class Climber {
 			
 	}
 	public void climb(){
-		climberTalon.set(1);
+		climberTalon.set(.25);
 	}
 	public void descend(){
 		climberTalon.set(-.25);

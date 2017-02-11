@@ -13,11 +13,13 @@ public class GearCamera {
 	private static final int IMG_WIDTH = 320;
 	private static final int IMG_HEIGHT = 240;
 	private static final int FOV = 61;
+	private static final int distMult = 2;
 	private VisionThread visionThread;
 	private Gyro gyro;
 
 	double targetAngle;
 	double lastValidAngle;
+	double dist;
 
 	public GearCamera(Gyro gyro) {
 		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
@@ -46,6 +48,7 @@ public class GearCamera {
 				double scaleOffset = offset / (IMG_WIDTH);
 				targetAngle = scaleOffset * FOV / 2;
 				lastValidAngle = gyro.getAngle();
+
 			}
 		}
 	}

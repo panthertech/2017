@@ -15,7 +15,7 @@ public class Shooter {
 	}
 
 	public void enableShooter() {
-		shooterTalon.set(1);
+		shooterTalon.set(.25);
 	}
 
 	public void disableShooter() {
@@ -24,7 +24,7 @@ public class Shooter {
 
 	public void shoot(boolean shoot) {
 		if(shoot){
-			feederServo.set(1);
+			feederServo.set(.3);
 		}else{
 			feederServo.set(0);
 		}

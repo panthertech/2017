@@ -8,12 +8,12 @@ public class Intake {
 		intakeTalon = new CANTalon(intakePort);
 	}
 	public void on(){
-		intakeTalon.set(1);
+		intakeTalon.set(-1);
 	}
 	public void off(){
 		intakeTalon.set(0);
 	}
 	public void reverse(){
-		intakeTalon.set(-.5);
+		intakeTalon.set(.5);
 	}
 }

@@ -23,8 +23,10 @@ public class Drive {
 		rearRightTalon = new CANTalon(rearRightPort);
 		rearRightTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
 		robotDrive = new RobotDrive(frontLeftTalon, rearLeftTalon, frontRightTalon, rearRightTalon);
-		robotDrive.setInvertedMotor(MotorType.kFrontRight, true);
+		robotDrive.setInvertedMotor(MotorType.kFrontRight, false);
 		robotDrive.setInvertedMotor(MotorType.kRearRight, true);
+		robotDrive.setInvertedMotor(MotorType.kFrontLeft, false);
+		robotDrive.setInvertedMotor(MotorType.kRearLeft, true);
 		robotDrive.setExpiration(0.1);
 	}
 

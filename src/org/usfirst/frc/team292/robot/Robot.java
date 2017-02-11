@@ -20,8 +20,12 @@ public class Robot extends IterativeRobot {
 	SendableChooser<String> chooser = new SendableChooser<>();
 	AutonomousMode auto;
 	public Drive drive;
+	public Climber climber;
+	public Intake intake;
+	public Shooter shooter;
+	public GearSensor gearSensor;
 	public OperatorInterface oi;
-	
+
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -32,6 +36,10 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
 		drive = new Drive(0, 1, 2, 3);
+		climber = new Climber(6);
+		intake = new Intake(4);
+		shooter = new Shooter(5, 6);
+		gearSensor = new GearSensor(8);
 		oi = new OperatorInterface();
 	}
 
@@ -72,7 +80,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopInit() {
-		
+
 	}
 
 	/**
@@ -81,6 +89,27 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		drive.mecanum(oi.getDriveX(), oi.getDriveY(), oi.getDriveZ());
+		if (oi.climb()) {
+			climber.climb();
+		} else {
+			climber.stop();
+		}
+		if (oi.intake()) {
+			intake.on();
+		}else {
+			intake.off();
+		}
+		shooter.shoot(oi.shoot());{
+			
+		}
+		if(oi.shootEnable()) {
+			shooter.enableShooter();
+		}else {
+			shooter.disableShooter();
+			
+		}
+		SmartDashboard.putBoolean("Gear Sensor", gearSensor.gearPresent());
+		
 	}
 
 	/**
@@ -88,7 +117,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledInit() {
-		
+
 	}
 
 	/**
@@ -96,7 +125,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledPeriodic() {
-		
+
 	}
 }
-

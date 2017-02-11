@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
-public class NavModule implements Gyro{
+public class NavModule implements Gyro {
 	public AHRS sensor;
 
 	public NavModule() {
@@ -18,6 +18,7 @@ public class NavModule implements Gyro{
 		}
 	}
 
+	@Override
 	public double getAngle() {
 		return sensor.getAngle();
 
@@ -26,13 +27,13 @@ public class NavModule implements Gyro{
 	@Override
 	public void calibrate() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class NavModule implements Gyro{
 	@Override
 	public void free() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
