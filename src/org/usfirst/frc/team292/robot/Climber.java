@@ -9,13 +9,13 @@ public class Climber {
 			
 	}
 	public void climb(){
-		climberTalon.set(.25);
+		climberTalon.set(-1);
 	}
 	public void descend(){
-		climberTalon.set(-.25);
+		climberTalon.set(.25);
 	}
 	public void maintain(){
-		climberTalon.set(.25);
+		climberTalon.set(-.25);
 	}
 	public void stop(){
 		climberTalon.set(0);

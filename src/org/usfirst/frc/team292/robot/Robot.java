@@ -25,6 +25,7 @@ public class Robot extends IterativeRobot {
 	public Shooter shooter;
 	public GearSensor gearSensor;
 	public OperatorInterface oi;
+	public NavModule nav;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -35,12 +36,22 @@ public class Robot extends IterativeRobot {
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
-		drive = new Drive(0, 1, 2, 3);
+
+		nav = new NavModule();
+		drive = new Drive(0, 1, 2, 3, nav);
 		climber = new Climber(6);
 		intake = new Intake(4);
 		shooter = new Shooter(5, 6);
 		gearSensor = new GearSensor(8);
 		oi = new OperatorInterface();
+	}
+
+	/**
+	 * This function is called periodically all modes
+	 */
+	@Override
+	public void robotPeriodic() {
+
 	}
 
 	/**
@@ -88,28 +99,37 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		drive.mecanum(oi.getDriveX(), oi.getDriveY(), oi.getDriveZ());
+		if (oi.placeGear()) {
+			placeGear();
+		} else {
+			drive.mecanum(oi.getDriveX(), oi.getDriveY(), oi.getDriveZ());
+		}
+
 		if (oi.climb()) {
 			climber.climb();
 		} else {
 			climber.stop();
 		}
+
 		if (oi.intake()) {
 			intake.on();
-		}else {
+		} else if (oi.reverseIntake()) {
+			intake.reverse();
+		} else {
 			intake.off();
 		}
-		shooter.shoot(oi.shoot());{
-			
-		}
-		if(oi.shootEnable()) {
+
+		shooter.shoot(oi.shoot());
+
+		if (oi.shootEnable()) {
 			shooter.enableShooter();
-		}else {
+		} else {
 			shooter.disableShooter();
-			
 		}
+
 		SmartDashboard.putBoolean("Gear Sensor", gearSensor.gearPresent());
-		
+		SmartDashboard.putNumber("Shooter Speed", shooter.getShooterSpeed());
+		SmartDashboard.putNumber("Shooter %", shooter.getShooterPercentVbus());
 	}
 
 	/**
@@ -126,5 +146,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void disabledPeriodic() {
 
+	}
+
+	public void placeGear() {
+		drive.mecanum(0, 0, 0);
 	}
 }

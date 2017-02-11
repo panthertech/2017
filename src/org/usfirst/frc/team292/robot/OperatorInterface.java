@@ -31,7 +31,6 @@ public class OperatorInterface {
 		else
 			x = 0;
 		return x;
-
 	}
 
 	public boolean shoot() {
@@ -52,5 +51,9 @@ public class OperatorInterface {
 
 	public boolean intake() {
 		return xbox.getBButton();
+	}
+
+	public boolean reverseIntake() {
+		return xbox.getBumper(Hand.kRight);
 	}
 }

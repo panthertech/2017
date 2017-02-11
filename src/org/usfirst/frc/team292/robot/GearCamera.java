@@ -22,7 +22,7 @@ public class GearCamera {
 	double dist;
 
 	public GearCamera(Gyro gyro) {
-		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture("cam0", 0);
 		camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 		targetAngle = gyro.getAngle();
 		lastValidAngle = gyro.getAngle();
@@ -48,7 +48,6 @@ public class GearCamera {
 				double scaleOffset = offset / (IMG_WIDTH);
 				targetAngle = scaleOffset * FOV / 2;
 				lastValidAngle = gyro.getAngle();
-
 			}
 		}
 	}

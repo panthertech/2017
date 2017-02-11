@@ -5,6 +5,7 @@ import com.ctre.CANTalon.FeedbackDevice;
 
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.RobotDrive.MotorType;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Drive {
 	RobotDrive robotDrive;
@@ -12,8 +13,9 @@ public class Drive {
 	CANTalon frontRightTalon;
 	CANTalon rearLeftTalon;
 	CANTalon rearRightTalon;
+	Gyro gyro;
 
-	public Drive(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort) {
+	public Drive(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort, Gyro gyro) {
 		frontLeftTalon = new CANTalon(frontLeftPort);
 		frontLeftTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
 		frontRightTalon = new CANTalon(rearLeftPort);
@@ -28,6 +30,7 @@ public class Drive {
 		robotDrive.setInvertedMotor(MotorType.kFrontLeft, false);
 		robotDrive.setInvertedMotor(MotorType.kRearLeft, true);
 		robotDrive.setExpiration(0.1);
+		this.gyro = gyro;
 	}
 
 	public void mecanum(double x, double y, double z) {

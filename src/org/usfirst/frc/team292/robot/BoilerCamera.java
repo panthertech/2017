@@ -22,7 +22,7 @@ public class BoilerCamera {
 	double dist;
 
 	public BoilerCamera(Gyro gyro) {
-		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture("cam1", 1);
 		camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 		targetAngle = gyro.getAngle();
 		lastValidAngle = gyro.getAngle();
@@ -46,16 +46,11 @@ public class BoilerCamera {
 				double scaleOffset = offset / (IMG_WIDTH);
 				targetAngle = scaleOffset * FOV / 2;
 				lastValidAngle = gyro.getAngle();
-			double widthX1 = r1.width;
-			double widthX2 = r2.width;
-			double width = (widthX1 + widthX2)/2;
+				double widthX1 = r1.width;
+				double widthX2 = r2.width;
+				double width = (widthX1 + widthX2) / 2;
 				dist = width * distMult;
-			
-			
-				
 			}
-
-		
 		}
 	}
 

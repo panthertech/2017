@@ -3,17 +3,21 @@ package org.usfirst.frc.team292.robot;
 import com.ctre.CANTalon;
 
 public class Intake {
-		CANTalon intakeTalon;
-	public Intake(int intakePort){
+	CANTalon intakeTalon;
+
+	public Intake(int intakePort) {
 		intakeTalon = new CANTalon(intakePort);
 	}
-	public void on(){
-		intakeTalon.set(-1);
+
+	public void on() {
+		intakeTalon.set(-.6);
 	}
-	public void off(){
+
+	public void off() {
 		intakeTalon.set(0);
 	}
-	public void reverse(){
+
+	public void reverse() {
 		intakeTalon.set(.5);
 	}
 }
