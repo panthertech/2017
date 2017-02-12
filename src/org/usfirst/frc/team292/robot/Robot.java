@@ -83,7 +83,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopInit() {
-
+		oi.updateControllerTypes();
 	}
 
 	/**
