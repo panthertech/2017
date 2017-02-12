@@ -73,60 +73,60 @@ public class OperatorInterface {
 	}
 
 	public double getDriveX() {
-		double value;
+		double retval;
 
 		switch (driverControllerType) {
 		case Joystick:
-			value = applyDeadbandJoystick(driverJoystick.getX());
+			retval = applyDeadbandJoystick(driverJoystick.getX());
 			break;
 		case XboxController:
-			value = applyDeadbandXbox(driverXbox.getX(Hand.kLeft));
+			retval = applyDeadbandXbox(driverXbox.getX(Hand.kLeft));
 			break;
 		case Invalid:
 		default:
-			value = 0;
+			retval = 0;
 			break;
 		}
 
-		return value;
+		return retval;
 	}
 
 	public double getDriveY() {
-		double value;
+		double retval;
 
 		switch (driverControllerType) {
 		case Joystick:
-			value = applyDeadbandJoystick(driverJoystick.getY());
+			retval = applyDeadbandJoystick(driverJoystick.getY());
 			break;
 		case XboxController:
-			value = applyDeadbandXbox(driverXbox.getY(Hand.kLeft));
+			retval = applyDeadbandXbox(driverXbox.getY(Hand.kLeft));
 			break;
 		case Invalid:
 		default:
-			value = 0;
+			retval = 0;
 			break;
 		}
 
-		return value;
+		return retval;
 	}
 
 	public double getDriveZ() {
-		double value;
+		double retval;
 
 		switch (driverControllerType) {
 		case Joystick:
-			value = applyDeadbandJoystick(driverJoystick.getZ());
+			retval = applyDeadbandJoystick(driverJoystick.getZ());
 			break;
 		case XboxController:
-			value = applyDeadbandXbox(driverXbox.getX(Hand.kRight));
+			retval = applyDeadbandXbox(driverXbox.getX(Hand.kRight));
 			break;
 		case Invalid:
 		default:
-			value = 0;
+			retval = 0;
 			break;
 		}
 
-		return value;
+		return retval;
 	}
 
 	private double applyDeadbandJoystick(double x) {
@@ -145,15 +145,98 @@ public class OperatorInterface {
 	}
 
 	public boolean shoot() {
-		return driverXbox.getAButton();
+		boolean retval;
+		
+		switch(operatorControllerType) {
+		case Joystick:
+			retval = operatorJoystick.getTrigger();
+			break;
+		case XboxController:
+			retval = (operatorXbox.getTriggerAxis(Hand.kRight) > 0.5) || (operatorXbox.getTriggerAxis(Hand.kLeft) > 0.5);
+			break;
+		case Invalid:
+		default:
+			retval = false;
+			break;
+		}
+		
+		return retval;
 	}
 
-	public boolean shootEnable() {
-		return driverXbox.getXButton();
+	public boolean shooterEnable() {
+		boolean retval;
+		
+		switch(operatorControllerType) {
+		case Joystick:
+			retval = operatorJoystick.getRawButton(3);
+			break;
+		case XboxController:
+			retval = operatorXbox.getBumper(Hand.kRight);
+			break;
+		case Invalid:
+		default:
+			retval = false;
+			break;
+		}
+		
+		return retval;
+	}
+	
+	public boolean shooterDisable() {
+		boolean retval;
+		
+		switch(operatorControllerType) {
+		case Joystick:
+			retval = operatorJoystick.getRawButton(2);
+			break;
+		case XboxController:
+			retval = operatorXbox.getBumper(Hand.kLeft);
+			break;
+		case Invalid:
+		default:
+			retval = false;
+			break;
+		}
+		
+		return retval;
 	}
 
 	public boolean climb() {
-		return driverXbox.getYButton();
+		boolean retval;
+		
+		switch(operatorControllerType) {
+		case Joystick:
+			retval = operatorJoystick.getRawButton(11);
+			break;
+		case XboxController:
+			retval = operatorXbox.getYButton();
+			break;
+		case Invalid:
+		default:
+			retval = false;
+			break;
+		}
+		
+		return retval;
+	}
+
+	public boolean descend() {
+		boolean retval;
+		
+		switch(operatorControllerType) {
+		case Joystick:
+			retval = operatorJoystick.getRawButton(10);
+			break;
+		case XboxController:
+			retval = operatorXbox.getXButton();
+			break;
+		case Invalid:
+		default:
+			retval = false;
+			break;
+		}
+		
+		return retval;
 	}
 
 	public boolean placeGear() {
@@ -175,11 +258,79 @@ public class OperatorInterface {
 		return retval;
 	}
 
-	public boolean intake() {
-		return driverXbox.getBButton();
+	public boolean enableIntake() {
+		boolean retval;
+		
+		switch(operatorControllerType) {
+		case Joystick:
+			retval = operatorJoystick.getRawButton(7);
+			break;
+		case XboxController:
+			retval = operatorXbox.getAButton();
+			break;
+		case Invalid:
+		default:
+			retval = false;
+			break;
+		}
+		
+		return retval;
 	}
-
+	
 	public boolean reverseIntake() {
-		return driverXbox.getBumper(Hand.kRight);
+		boolean retval;
+		
+		switch(operatorControllerType) {
+		case Joystick:
+			retval = operatorJoystick.getRawButton(6);
+			break;
+		case XboxController:
+			retval = operatorXbox.getBButton();
+			break;
+		case Invalid:
+		default:
+			retval = false;
+			break;
+		}
+		
+		return retval;
+	}
+	
+	public boolean viewGearCamera() {
+		boolean retval;
+		
+		switch(operatorControllerType) {
+		case Joystick:
+			retval = operatorJoystick.getRawButton(8);
+			break;
+		case XboxController:
+			retval = operatorXbox.getBackButton();
+			break;
+		case Invalid:
+		default:
+			retval = false;
+			break;
+		}
+		
+		return retval;
+	}
+	
+	public boolean viewBoilerCamera() {
+		boolean retval;
+		
+		switch(operatorControllerType) {
+		case Joystick:
+			retval = operatorJoystick.getRawButton(9);
+			break;
+		case XboxController:
+			retval = operatorXbox.getStartButton();
+			break;
+		case Invalid:
+		default:
+			retval = false;
+			break;
+		}
+		
+		return retval;
 	}
 }

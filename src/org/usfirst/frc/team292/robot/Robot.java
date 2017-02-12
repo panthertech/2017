@@ -12,6 +12,9 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  * directory.
  */
 public class Robot extends IterativeRobot {
+	private static final int kGearCameraId = 0;
+	private static final int kBoilerCameraId = 1;
+	
 	final String defaultAuto = "Default";
 	final String customAuto = "My Auto";
 	/* The first entry in the autoModes array will be the default mode */
@@ -45,8 +48,10 @@ public class Robot extends IterativeRobot {
 		shooter = new Shooter(5, 6);
 		gearSensor = new GearSensor(8);
 		oi = new OperatorInterface();
-		gearCamera = new GearCamera("cam0", 0, nav, 2);
-		boilerCamera = new BoilerCamera("cam1", 1, nav, 3);
+		gearCamera = new GearCamera("cam0", kGearCameraId, nav, 2);
+		boilerCamera = new BoilerCamera("cam1", kGearCameraId, nav, 3);
+		
+		db.viewCamera(kGearCameraId);
 	}
 
 	/**
@@ -54,7 +59,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotPeriodic() {
-
+		if(oi.viewGearCamera()) {
+			db.viewCamera(kGearCameraId);
+		}
+		if(oi.viewBoilerCamera()) {
+			db.viewCamera(kBoilerCameraId);
+		}
 	}
 
 	/**
@@ -84,6 +94,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		oi.updateControllerTypes();
+		shooter.disableShooter();
+		climber.stop();
+		intake.off();
 	}
 
 	/**
@@ -101,25 +114,27 @@ public class Robot extends IterativeRobot {
 
 		if (oi.climb()) {
 			climber.climb();
+		} else if (oi.descend()) {
+			climber.descend();
 		} else {
-			climber.stop();
+			climber.maintain();
 		}
 
-		if (oi.intake()) {
+		if (oi.enableIntake()) {
 			intake.on();
 		} else if (oi.reverseIntake()) {
 			intake.reverse();
 		} else {
-			intake.off();
+			intake.maintain();
 		}
 
-		shooter.shoot(oi.shoot());
-
-		if (oi.shootEnable()) {
+		if (oi.shooterEnable()) {
 			shooter.enableShooter();
-		} else {
+		}
+		if (oi.shooterDisable()) {
 			shooter.disableShooter();
 		}
+		shooter.shoot(oi.shoot());
 	}
 
 	/**

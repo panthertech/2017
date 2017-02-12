@@ -31,9 +31,11 @@ public class Dashboard extends Thread {
 	public void run() {
 		SmartDashboard.putBoolean("Gear Sensor", robot.gearSensor.gearPresent());
 		SmartDashboard.putNumber("Shooter Speed", robot.shooter.getShooterSpeed());
-		SmartDashboard.putNumber("Shooter %", robot.shooter.getShooterPercentVbus());
+		SmartDashboard.putNumber("Shooter %", robot.shooter.getShooterPercent());
 		SmartDashboard.putString("Driver Controller Type", robot.oi.getDriverControllerType().toString());
 		SmartDashboard.putString("Operator Controller Type", robot.oi.getOperatorControllerType().toString());
+		SmartDashboard.putBoolean("Intake Enabled", robot.intake.getIntakeEnabled());
+		SmartDashboard.putBoolean("Climber Enabled", robot.climber.getClimberEnabled());
 	}
 
 	public void setAutoModes(String[] modes) {
@@ -68,5 +70,9 @@ public class Dashboard extends Thread {
 	
 	public Alliance getAlliance() {
 		return ds.getAlliance();
+	}
+	
+	public void viewCamera(int device) {
+		SmartDashboard.putNumber("Selected Camera", device);
 	}
 }
