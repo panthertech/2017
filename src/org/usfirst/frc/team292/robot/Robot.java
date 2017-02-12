@@ -26,8 +26,8 @@ public class Robot extends IterativeRobot {
 	public GearSensor gearSensor;
 	public OperatorInterface oi;
 	public NavModule nav;
-	public GearCamera gearCamera;
-	public BoilerCamera boilerCamera;
+	public Camera gearCamera;
+	public Camera boilerCamera;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -45,8 +45,8 @@ public class Robot extends IterativeRobot {
 		shooter = new Shooter(5, 6);
 		gearSensor = new GearSensor(8);
 		oi = new OperatorInterface();
-		gearCamera = new GearCamera("cam0", 0, nav);
-		boilerCamera = new BoilerCamera("cam1", 1, nav);
+		gearCamera = new GearCamera("cam0", 0, nav, 2);
+		boilerCamera = new BoilerCamera("cam1", 1, nav, 3);
 	}
 
 	/**
@@ -92,8 +92,10 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		if (oi.placeGear()) {
+			gearCamera.enableProcessing();
 			placeGear();
 		} else {
+			gearCamera.disableProcessing();
 			drive.mecanum(oi.getDriveX(), oi.getDriveY(), oi.getDriveZ());
 		}
 

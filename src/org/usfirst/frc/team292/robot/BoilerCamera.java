@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 public class BoilerCamera extends Camera {
 	protected static final int DIST_MULT = 2;
 	
-	public BoilerCamera(String cameraName, int device, Gyro gyro) {
-		super(cameraName, device, gyro);
+	public BoilerCamera(String cameraName, int device, Gyro gyro, int lightPort) {
+		super(cameraName, device, gyro, lightPort);
 	}
 
 	/*

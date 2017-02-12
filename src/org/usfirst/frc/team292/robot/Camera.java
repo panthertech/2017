@@ -5,6 +5,7 @@ import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.vision.VisionThread;
 
@@ -13,20 +14,31 @@ public class Camera {
 	protected static final int IMG_HEIGHT = 240;
 	protected static final int FOV = 61;
 	protected static final int DIST_MULT = 1;
+	
 	protected Gyro gyro;
 
 	protected double targetAngle;
 	protected double lastValidAngle;
 	protected double dist;
 
-	public Camera(String cameraName, int device, Gyro gyro) {
+	private Solenoid light;
+	private boolean processingEnabled;
+
+	public Camera(String cameraName, int device, Gyro gyro, int lightPort) {
 		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(cameraName, device);
 		camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 		this.gyro = gyro;
+		light = new Solenoid(lightPort);
 		targetAngle = gyro.getAngle();
 		lastValidAngle = gyro.getAngle();
+		processingEnabled = false;
 		VisionThread visionThread = new VisionThread(camera, new GripPipeline(), pipeline -> {
-			process(pipeline);
+			if(processingEnabled) {
+				light.set(true);
+				process(pipeline);
+			} else {
+				light.set(false);
+			}
 		});
 		visionThread.start();
 	}
@@ -71,5 +83,13 @@ public class Camera {
 	 */
 	public double getTargetDistance() {
 		return dist;
+	}
+	
+	public void enableProcessing() {
+		processingEnabled = true;
+	}
+	
+	public void disableProcessing() {
+		processingEnabled = false;
 	}
 }
