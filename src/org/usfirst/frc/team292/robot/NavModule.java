@@ -21,31 +21,26 @@ public class NavModule implements Gyro {
 	@Override
 	public double getAngle() {
 		return sensor.getAngle();
-
 	}
 
 	@Override
 	public void calibrate() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
-
+		sensor.zeroYaw();
 	}
 
 	@Override
 	public double getRate() {
-		// TODO Auto-generated method stub
-		return 0;
+		return sensor.getRawGyroY();
 	}
 
 	@Override
 	public void free() {
-		// TODO Auto-generated method stub
-
+		sensor.free();
 	}
 
 }

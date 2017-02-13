@@ -6,13 +6,11 @@ public class DriveAuto extends AutonomousMode {
 
 	public DriveAuto(Robot robot) {
 		super(robot);
+		robot.drive.initDriveDistance(5);
 	}
+	
 	public void periodic () {
-		if (robot.drive.getFrontleftPosition() >= 5) {
-			robot.drive.mecanum(0, 0, 0);
-		} else {
-			robot.drive.mecanum(0, .5, 0);
-		}
+		robot.drive.driveDistance();
 	}
 	
 

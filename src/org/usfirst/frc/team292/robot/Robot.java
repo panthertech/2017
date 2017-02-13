@@ -153,10 +153,42 @@ public class Robot extends IterativeRobot {
 
 	}
 
+	boolean turnInit, turnComplete, distanceInit, distanceComplete;
+	
+	public void initPlaceGear() {
+		turnInit = false;
+	}
+	
 	/**
 	 * This function automatically drives the robot to place a gear on the lift
 	 */
-	public void placeGear() {
-		drive.mecanum(0, 0, 0);
+	public boolean placeGear() {
+		boolean retval = false;
+		
+		if(!turnInit) {
+			drive.initTurn(gearCamera.getTargetAngle());
+			turnInit = true;
+			turnComplete = false;
+		}
+		
+		if(!turnComplete) {
+			turnComplete = drive.turn();
+			distanceInit = false;
+		} else {
+			if(!distanceInit) {
+				drive.initDriveDistance(gearCamera.getTargetDistance());
+				distanceInit = true;
+				distanceComplete = false;
+			}
+			
+			if(!distanceComplete) {
+				distanceComplete = drive.driveDistance();
+			} else {
+				drive.stop();
+				retval = true;
+			}
+		}
+		
+		return retval;
 	}
 }
