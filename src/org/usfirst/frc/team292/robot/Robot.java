@@ -20,8 +20,8 @@ public class Robot extends IterativeRobot {
 	/* The first entry in the autoModes array will be the default mode */
 	final String[] autoModes = {defaultAuto, customAuto};
 	
-	AutonomousMode auto;
-	Dashboard db;
+	public AutonomousMode auto;
+	public Dashboard db;
 	public Drive drive;
 	public Climber climber;
 	public Intake intake;
@@ -31,6 +31,9 @@ public class Robot extends IterativeRobot {
 	public NavModule nav;
 	public Camera gearCamera;
 	public Camera boilerCamera;
+	
+	/* Variables for managing automatic gear placement */
+	boolean placeGearInit, turnInit, turnComplete, distanceInit, distanceComplete;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -52,6 +55,8 @@ public class Robot extends IterativeRobot {
 		boilerCamera = new BoilerCamera("cam1", kGearCameraId, nav, 3);
 		
 		db.viewCamera(kGearCameraId);
+		
+		placeGearInit = false;
 	}
 
 	/**
@@ -105,9 +110,14 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		if (oi.placeGear()) {
+			if(!placeGearInit) {
+				initPlaceGear();
+				placeGearInit = true;
+			}
 			gearCamera.enableProcessing();
 			placeGear();
 		} else {
+			placeGearInit = false;
 			gearCamera.disableProcessing();
 			drive.mecanum(oi.getDriveX(), oi.getDriveY(), oi.getDriveZ());
 		}
@@ -152,8 +162,6 @@ public class Robot extends IterativeRobot {
 	public void disabledPeriodic() {
 
 	}
-
-	boolean turnInit, turnComplete, distanceInit, distanceComplete;
 	
 	public void initPlaceGear() {
 		turnInit = false;
