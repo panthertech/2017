@@ -6,7 +6,7 @@ import org.opencv.imgproc.Imgproc;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class BoilerCamera extends Camera {
-	protected static final int DIST_MULT = 2;
+	protected static final double TARGET_WIDTH = 15;
 	
 	public BoilerCamera(String cameraName, int device, Gyro gyro, int lightPort) {
 		super(cameraName, device, gyro, lightPort);
@@ -36,7 +36,7 @@ public class BoilerCamera extends Camera {
 				double widthX1 = r1.width;
 				double widthX2 = r2.width;
 				double width = (widthX1 + widthX2) / 2;
-				dist = width * DIST_MULT;
+				dist = (TARGET_WIDTH * FOCAL_LENGTH) / width;
 			}
 		}
 	}

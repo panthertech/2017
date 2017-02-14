@@ -7,8 +7,7 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class GearCamera extends Camera {
-	protected static final double DIST_MULT = 2.5;
-	protected static final double[][] widthToDistMap = { { 11, 52 }, { 13.5, 33.5 }, { 26, 16.5 } };
+	protected static final double TARGET_WIDTH = 2;
 
 	public GearCamera(String cameraName, int device, Gyro gyro, int lightPort) {
 		super(cameraName, device, gyro, lightPort);
@@ -41,7 +40,7 @@ public class GearCamera extends Camera {
 				double widthX1 = r1.width;
 				double widthX2 = r2.width;
 				double width = (widthX1 + widthX2) / 2;
-				dist = width * DIST_MULT;
+				dist = (TARGET_WIDTH * FOCAL_LENGTH) / width;
 				
 				SmartDashboard.putNumber("Camera Angle", targetAngle);
 				SmartDashboard.putNumber("Camera Distance", dist);

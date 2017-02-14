@@ -13,7 +13,8 @@ public class Camera {
 	protected static final int IMG_WIDTH = 320;
 	protected static final int IMG_HEIGHT = 240;
 	protected static final int FOV = 61;
-	protected static final int DIST_MULT = 1;
+	protected static final double FOCAL_LENGTH = 230;
+	protected static final double TARGET_WIDTH = 1;
 	
 	protected Gyro gyro;
 
@@ -61,8 +62,8 @@ public class Camera {
 			targetAngle = scaleOffset * FOV / 2;
 			lastValidAngle = gyro.getAngle();
 			
-			double widthX = r.width;
-			dist = widthX * DIST_MULT;
+			double width = r.width;
+			dist = (TARGET_WIDTH * FOCAL_LENGTH) / width;
 		}
 	}
 
