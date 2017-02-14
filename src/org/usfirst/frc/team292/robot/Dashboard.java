@@ -1,5 +1,7 @@
 package org.usfirst.frc.team292.robot;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -9,6 +11,7 @@ public class Dashboard extends Thread {
 	Robot robot;
 	String autoSelected;
 	SendableChooser<String> chooser;
+	String[] autoModes;
 	String defaultMode;
 	DriverStation ds;
 	SmartDashboard db;
@@ -20,8 +23,6 @@ public class Dashboard extends Thread {
 	public Dashboard(Robot robot) {
 		super();
 		this.robot = robot;
-		this.setPriority(MIN_PRIORITY);
-		this.start();
 		chooser = new SendableChooser<>();
 		ds = DriverStation.getInstance();
 		db = new SmartDashboard();
@@ -29,22 +30,21 @@ public class Dashboard extends Thread {
 
 	@Override
 	public void run() {
-		SmartDashboard.putBoolean("Gear Sensor", robot.gearSensor.gearPresent());
-		SmartDashboard.putNumber("Shooter Speed", robot.shooter.getShooterSpeed());
-		SmartDashboard.putNumber("Shooter %", robot.shooter.getShooterPercent());
-		SmartDashboard.putString("Driver Controller Type", robot.oi.getDriverControllerType().toString());
-		SmartDashboard.putString("Operator Controller Type", robot.oi.getOperatorControllerType().toString());
-		SmartDashboard.putBoolean("Intake Enabled", robot.intake.getIntakeEnabled());
-		SmartDashboard.putBoolean("Climber Enabled", robot.climber.getClimberEnabled());
+		while (true) {
+			SmartDashboard.putBoolean("Gear Sensor", robot.gearSensor.gearPresent());
+			SmartDashboard.putNumber("Shooter Speed", robot.shooter.getShooterSpeed());
+			SmartDashboard.putNumber("Shooter %", robot.shooter.getShooterPercent());
+			SmartDashboard.putString("Driver Controller Type", robot.oi.getDriverControllerType().toString());
+			SmartDashboard.putString("Operator Controller Type", robot.oi.getOperatorControllerType().toString());
+			SmartDashboard.putBoolean("Intake Enabled", robot.intake.getIntakeEnabled());
+			SmartDashboard.putBoolean("Climber Enabled", robot.climber.getClimberEnabled());
+		}
 	}
 
 	public void setAutoModes(String[] modes) {
 		defaultMode = modes[0];
-		chooser.addDefault(defaultMode, defaultMode);
-		for (int i = 1; i < modes.length; i++) {
-			chooser.addObject(modes[i], modes[i]);
-		}
-		SmartDashboard.putData("Auto choices", chooser);
+		autoModes = modes;
+		db.putStringArray("Auto choices", autoModes);
 	}
 
 	public String getSelectedAutoMode() {
@@ -67,11 +67,11 @@ public class Dashboard extends Thread {
 		}
 		return pos;
 	}
-	
+
 	public Alliance getAlliance() {
 		return ds.getAlliance();
 	}
-	
+
 	public void viewCamera(int device) {
 		SmartDashboard.putNumber("Selected Camera", device);
 	}

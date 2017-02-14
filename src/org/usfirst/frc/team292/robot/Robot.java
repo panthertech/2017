@@ -43,6 +43,8 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		db = new Dashboard(this);
 		db.setAutoModes(autoModes);
+		db.setPriority(Thread.MIN_PRIORITY);
+		db.start();
 		
 		nav = new NavModule();
 		drive = new Drive(0, 1, 2, 3, nav);
@@ -51,8 +53,8 @@ public class Robot extends IterativeRobot {
 		shooter = new Shooter(5, 6);
 		gearSensor = new GearSensor(8);
 		oi = new OperatorInterface();
-		gearCamera = new GearCamera("cam0", kGearCameraId, nav, 2);
-		boilerCamera = new BoilerCamera("cam1", kGearCameraId, nav, 3);
+		gearCamera = new GearCamera("cam0", kGearCameraId, nav, 3);
+		//boilerCamera = new BoilerCamera("cam1", kGearCameraId, nav, 2);
 		
 		db.viewCamera(kGearCameraId);
 		
@@ -180,7 +182,7 @@ public class Robot extends IterativeRobot {
 		}
 		
 		if(!turnComplete) {
-			turnComplete = drive.turn();
+			//turnComplete = drive.turn();
 			distanceInit = false;
 		} else {
 			if(!distanceInit) {
@@ -190,7 +192,7 @@ public class Robot extends IterativeRobot {
 			}
 			
 			if(!distanceComplete) {
-				distanceComplete = drive.driveDistance();
+				//distanceComplete = drive.driveDistance();
 			} else {
 				drive.stop();
 				retval = true;

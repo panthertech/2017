@@ -4,9 +4,11 @@ import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class GearCamera extends Camera {
-	protected static final int DIST_MULT = 2;
+	protected static final double DIST_MULT = 2.5;
+	protected static final double[][] widthToDistMap = { { 11, 52 }, { 13.5, 33.5 }, { 26, 16.5 } };
 
 	public GearCamera(String cameraName, int device, Gyro gyro, int lightPort) {
 		super(cameraName, device, gyro, lightPort);
@@ -40,7 +42,16 @@ public class GearCamera extends Camera {
 				double widthX2 = r2.width;
 				double width = (widthX1 + widthX2) / 2;
 				dist = width * DIST_MULT;
+				
+				SmartDashboard.putNumber("Camera Angle", targetAngle);
+				SmartDashboard.putNumber("Camera Distance", dist);
 			}
 		}
+	}
+	
+	protected double widthToDist(double width) {
+		double distance = 0;
+		
+		return distance;
 	}
 }
