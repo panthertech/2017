@@ -43,8 +43,6 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		db = new Dashboard(this);
 		db.setAutoModes(autoModes);
-		db.setPriority(Thread.MIN_PRIORITY);
-		db.start();
 		
 		nav = new NavModule();
 		drive = new Drive(0, 1, 2, 3, nav);

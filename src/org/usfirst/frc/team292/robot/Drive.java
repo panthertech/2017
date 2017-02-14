@@ -4,9 +4,7 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.RobotDrive.MotorType;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive {
 	RobotDrive robotDrive;
@@ -19,33 +17,31 @@ public class Drive {
 	public Drive(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort, Gyro gyro) {
 		frontLeftTalon = new CANTalon(frontLeftPort);
 		frontLeftTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+		frontLeftTalon.setInverted(false);
 		frontLeftTalon.reverseSensor(true);
 		
 		rearLeftTalon = new CANTalon(rearLeftPort);
 		rearLeftTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+		rearLeftTalon.setInverted(false);
 		rearLeftTalon.reverseSensor(true);
 		
 		frontRightTalon = new CANTalon(frontRightPort);
 		frontRightTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+		frontRightTalon.setInverted(true);
+		frontRightTalon.reverseSensor(false);
 		
 		rearRightTalon = new CANTalon(rearRightPort);
 		rearRightTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+		rearRightTalon.setInverted(true);
+		rearRightTalon.reverseSensor(false);
 		
 		robotDrive = new RobotDrive(frontLeftTalon, rearLeftTalon, frontRightTalon, rearRightTalon);
-		robotDrive.setInvertedMotor(MotorType.kFrontRight, true);
-		robotDrive.setInvertedMotor(MotorType.kRearRight, true);
-		robotDrive.setInvertedMotor(MotorType.kFrontLeft, false);
-		robotDrive.setInvertedMotor(MotorType.kRearLeft, false);
-		robotDrive.setExpiration(0.1);
+		
 		this.gyro = gyro;
 	}
 
 	public void mecanum(double x, double y, double z) {
 		mecanum(x, y, z, false);
-		SmartDashboard.putNumber("Front Left", getFrontLeftPosition());
-		SmartDashboard.putNumber("Rear Left", getRearLeftPosition());
-		SmartDashboard.putNumber("Front Right", getFrontRightPosition());
-		SmartDashboard.putNumber("Rear Right", getRearRightPosition());
 	}
 
 	public void mecanum(double x, double y, double z, boolean useGyroAngle) {
@@ -103,14 +99,14 @@ public class Drive {
 				retval = true;
 				robotDrive.stopMotor();
 			} else {
-				mecanum(0, 0, -0.5, true);
+				mecanum(0, 0, -0.5);
 			}
 		} else {
 			if(gyro.getAngle() > angleToTurn) {
 				retval = true;
 				robotDrive.stopMotor();
 			} else {
-				mecanum(0, 0, 0.5, true);
+				mecanum(0, 0, 0.5);
 			}
 		}
 
@@ -131,14 +127,14 @@ public class Drive {
 				retval = true;
 				robotDrive.stopMotor();
 			} else {
-				mecanum(0, -0.5, 0, true);
+				mecanum(0, -0.5, 0);
 			}
 		} else {
 			if(getDistance() > distanceToDrive) {
 				retval = true;
 				robotDrive.stopMotor();
 			} else {
-				mecanum(0, 0.5, 0, true);
+				mecanum(0, 0.5, 0);
 			}
 		}
 		

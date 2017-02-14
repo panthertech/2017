@@ -1,43 +1,52 @@
 package org.usfirst.frc.team292.robot;
 
-import java.util.ArrayList;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Dashboard extends Thread {
-	Robot robot;
-	String autoSelected;
-	SendableChooser<String> chooser;
-	String[] autoModes;
-	String defaultMode;
-	DriverStation ds;
-	SmartDashboard db;
+public class Dashboard {
+	private Thread thread;
+	private Robot robot;
+	private String[] autoModes;
+	private String defaultMode;
+	private DriverStation ds;
+	private SmartDashboard db;
 
 	public enum StartingPosition {
 		Left, Middle, Right;
 	}
 
 	public Dashboard(Robot robot) {
-		super();
 		this.robot = robot;
-		chooser = new SendableChooser<>();
 		ds = DriverStation.getInstance();
 		db = new SmartDashboard();
+		thread = new DashboardThread();
+		thread.setPriority(Thread.MIN_PRIORITY);
+		thread.start();
 	}
+	
+	private class DashboardThread extends Thread {
+		@Override
+		public void run() {
+			while (true) {
+				SmartDashboard.putBoolean("Gear Sensor", robot.gearSensor.gearPresent());
+				SmartDashboard.putNumber("Shooter Speed", robot.shooter.getShooterSpeed());
+				SmartDashboard.putNumber("Shooter %", robot.shooter.getShooterPercent());
+				SmartDashboard.putString("Driver Controller Type", robot.oi.getDriverControllerType().toString());
+				SmartDashboard.putString("Operator Controller Type", robot.oi.getOperatorControllerType().toString());
+				SmartDashboard.putBoolean("Intake Enabled", robot.intake.getIntakeEnabled());
+				SmartDashboard.putBoolean("Climber Enabled", robot.climber.getClimberEnabled());
+				SmartDashboard.putNumber("Wheel Position Front Left", robot.drive.getFrontLeftPosition());
+				SmartDashboard.putNumber("Wheel Position Rear Left", robot.drive.getRearLeftPosition());
+				SmartDashboard.putNumber("Wheel Position Front Right", robot.drive.getFrontRightPosition());
+				SmartDashboard.putNumber("Wheel Position Rear Right", robot.drive.getRearRightPosition());
 
-	@Override
-	public void run() {
-		while (true) {
-			SmartDashboard.putBoolean("Gear Sensor", robot.gearSensor.gearPresent());
-			SmartDashboard.putNumber("Shooter Speed", robot.shooter.getShooterSpeed());
-			SmartDashboard.putNumber("Shooter %", robot.shooter.getShooterPercent());
-			SmartDashboard.putString("Driver Controller Type", robot.oi.getDriverControllerType().toString());
-			SmartDashboard.putString("Operator Controller Type", robot.oi.getOperatorControllerType().toString());
-			SmartDashboard.putBoolean("Intake Enabled", robot.intake.getIntakeEnabled());
-			SmartDashboard.putBoolean("Climber Enabled", robot.climber.getClimberEnabled());
+				try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    DriverStation.reportError("Dashboard Error: " + e.toString(), true);
+                }
+			}
 		}
 	}
 
