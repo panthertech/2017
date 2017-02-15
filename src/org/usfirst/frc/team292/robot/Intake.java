@@ -3,7 +3,7 @@ package org.usfirst.frc.team292.robot;
 import com.ctre.CANTalon;
 
 public class Intake {
-	private static final double kIntakeSpeed = -0.6;
+	private static final double kIntakeSpeed = -0.8;
 	private static final double kReverseSpeed = 0.5;
 	
 	private CANTalon intakeTalon;

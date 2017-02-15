@@ -26,20 +26,28 @@ public class Dashboard {
 	}
 	
 	private class DashboardThread extends Thread {
+		public DashboardThread() {
+			super("Dashboard Thread");
+		}
+		
 		@Override
 		public void run() {
 			while (true) {
-				SmartDashboard.putBoolean("Gear Sensor", robot.gearSensor.gearPresent());
-				SmartDashboard.putNumber("Shooter Speed", robot.shooter.getShooterSpeed());
-				SmartDashboard.putNumber("Shooter %", robot.shooter.getShooterPercent());
-				SmartDashboard.putString("Driver Controller Type", robot.oi.getDriverControllerType().toString());
-				SmartDashboard.putString("Operator Controller Type", robot.oi.getOperatorControllerType().toString());
-				SmartDashboard.putBoolean("Intake Enabled", robot.intake.getIntakeEnabled());
-				SmartDashboard.putBoolean("Climber Enabled", robot.climber.getClimberEnabled());
-				SmartDashboard.putNumber("Wheel Position Front Left", robot.drive.getFrontLeftPosition());
-				SmartDashboard.putNumber("Wheel Position Rear Left", robot.drive.getRearLeftPosition());
-				SmartDashboard.putNumber("Wheel Position Front Right", robot.drive.getFrontRightPosition());
-				SmartDashboard.putNumber("Wheel Position Rear Right", robot.drive.getRearRightPosition());
+				try {
+					SmartDashboard.putBoolean("Gear Sensor", robot.gearSensor.gearPresent());
+					SmartDashboard.putNumber("Shooter Speed", robot.shooter.getShooterSpeed());
+					SmartDashboard.putNumber("Shooter %", robot.shooter.getShooterPercent());
+					SmartDashboard.putString("Driver Controller Type", robot.oi.getDriverControllerType().toString());
+					SmartDashboard.putString("Operator Controller Type", robot.oi.getOperatorControllerType().toString());
+					SmartDashboard.putBoolean("Intake Enabled", robot.intake.getIntakeEnabled());
+					SmartDashboard.putBoolean("Climber Enabled", robot.climber.getClimberEnabled());
+					SmartDashboard.putNumber("Wheel Position Front Left", robot.drive.getFrontLeftPosition());
+					SmartDashboard.putNumber("Wheel Position Rear Left", robot.drive.getRearLeftPosition());
+					SmartDashboard.putNumber("Wheel Position Front Right", robot.drive.getFrontRightPosition());
+					SmartDashboard.putNumber("Wheel Position Rear Right", robot.drive.getRearRightPosition());
+				} catch (NullPointerException e) {
+                    DriverStation.reportError("Dashboard Error: " + e.toString(), true);
+				}
 
 				try {
                     Thread.sleep(100);

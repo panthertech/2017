@@ -47,10 +47,4 @@ public class GearCamera extends Camera {
 			}
 		}
 	}
-	
-	protected double widthToDist(double width) {
-		double distance = 0;
-		
-		return distance;
-	}
 }

@@ -41,9 +41,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		db = new Dashboard(this);
-		db.setAutoModes(autoModes);
-		
 		nav = new NavModule();
 		drive = new Drive(0, 1, 2, 3, nav);
 		climber = new Climber(6);
@@ -53,7 +50,9 @@ public class Robot extends IterativeRobot {
 		oi = new OperatorInterface();
 		gearCamera = new GearCamera("cam0", kGearCameraId, nav, 3);
 		//boilerCamera = new BoilerCamera("cam1", kGearCameraId, nav, 2);
-		
+
+		db = new Dashboard(this);
+		db.setAutoModes(autoModes);
 		db.viewCamera(kGearCameraId);
 		
 		placeGearInit = false;
