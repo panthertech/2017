@@ -115,7 +115,9 @@ public class OperatorInterface {
 
 		switch (driverControllerType) {
 		case Joystick:
-			retval = applyDeadbandJoystick(driverJoystick.getZ());
+			double z = applyDeadbandJoystick(driverJoystick.getZ());
+			z = (z < 0) ? -z * z : z * z;
+			retval = z;
 			break;
 		case XboxController:
 			retval = applyDeadbandXbox(driverXbox.getX(Hand.kRight));

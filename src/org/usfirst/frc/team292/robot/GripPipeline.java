@@ -51,9 +51,9 @@ public class GripPipeline implements VisionPipeline {
 
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = blurOutput;
-		double[] hsvThresholdHue = {79.31654676258992, 98.1818181818182};
-		double[] hsvThresholdSaturation = {59.62230215827338, 255.0};
-		double[] hsvThresholdValue = {162.81474820143885, 255.0};
+		double[] hsvThresholdHue = {76.07913669064747, 98.1818181818182};
+		double[] hsvThresholdSaturation = {22.93165467625899, 255.0};
+		double[] hsvThresholdValue = {217.85071942446044, 255.0};
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step CV_erode0:
