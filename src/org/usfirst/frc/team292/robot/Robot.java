@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	private static final int kGearCameraId = 0;
+	private static final int kGearCameraId = 1;
 	private static final String kGearCameraName = "Gear Camera";
-	private static final int kBoilerCameraId = 1;
+	private static final int kBoilerCameraId = 0;
 	private static final String kBoilerCameraName = "Boiler Camera";
 	public static final double kRobotLength = 40;
 	
@@ -52,7 +52,7 @@ public class Robot extends IterativeRobot {
 		gearSensor = new GearSensor(8);
 		oi = new OperatorInterface();
 		gearCamera = new GearCamera(kGearCameraName, kGearCameraId, nav, 3);
-		//boilerCamera = new BoilerCamera(kBoilerCameraName, kGearCameraId, nav, 2);
+		boilerCamera = new BoilerCamera(kBoilerCameraName, kBoilerCameraId, nav, 2);
 
 		db = new Dashboard(this);
 		db.setAutoModes(autoModes);
