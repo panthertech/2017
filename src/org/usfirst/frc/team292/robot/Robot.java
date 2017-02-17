@@ -13,7 +13,10 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  */
 public class Robot extends IterativeRobot {
 	private static final int kGearCameraId = 0;
+	private static final String kGearCameraName = "Gear Camera";
 	private static final int kBoilerCameraId = 1;
+	private static final String kBoilerCameraName = "Boiler Camera";
+	public static final double kRobotLength = 40;
 	
 	final String defaultAuto = "Default";
 	final String customAuto = "My Auto";
@@ -33,7 +36,7 @@ public class Robot extends IterativeRobot {
 	public Camera boilerCamera;
 	
 	/* Variables for managing automatic gear placement */
-	boolean placeGearInit, turnInit, turnComplete, distanceInit, distanceComplete;
+	boolean placeGearInit, turnComplete, distanceComplete;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -48,12 +51,12 @@ public class Robot extends IterativeRobot {
 		shooter = new Shooter(5, 6);
 		gearSensor = new GearSensor(8);
 		oi = new OperatorInterface();
-		gearCamera = new GearCamera("cam0", kGearCameraId, nav, 3);
-		//boilerCamera = new BoilerCamera("cam1", kGearCameraId, nav, 2);
+		gearCamera = new GearCamera(kGearCameraName, kGearCameraId, nav, 3);
+		//boilerCamera = new BoilerCamera(kBoilerCameraName, kGearCameraId, nav, 2);
 
 		db = new Dashboard(this);
 		db.setAutoModes(autoModes);
-		db.viewCamera(kGearCameraId);
+		db.viewCamera(kGearCameraName);
 		
 		placeGearInit = false;
 	}
@@ -64,10 +67,10 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotPeriodic() {
 		if(oi.viewGearCamera()) {
-			db.viewCamera(kGearCameraId);
+			db.viewCamera(kGearCameraName);
 		}
 		if(oi.viewBoilerCamera()) {
-			db.viewCamera(kBoilerCameraId);
+			db.viewCamera(kBoilerCameraName);
 		}
 	}
 
@@ -163,7 +166,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void initPlaceGear() {
-		turnInit = false;
+		turnComplete = false;
 	}
 	
 	/**
@@ -172,26 +175,14 @@ public class Robot extends IterativeRobot {
 	public boolean placeGear() {
 		boolean retval = false;
 		
-		if(!turnInit) {
-			drive.initTurn(gearCamera.getTargetAngle());
-			turnInit = true;
-			turnComplete = false;
-		}
-		
 		if(!turnComplete) {
-			//turnComplete = drive.turn();
-			distanceInit = false;
+			//turnComplete = drive.turn(gearCamera.getTargetAngle());
+			distanceComplete = false;
 		} else {
-			if(!distanceInit) {
-				drive.initDriveDistance(gearCamera.getTargetDistance());
-				distanceInit = true;
-				distanceComplete = false;
-			}
-			
 			if(!distanceComplete) {
-				//distanceComplete = drive.driveDistance();
+				//distanceComplete = drive.driveDistance(gearCamera.getTargetDistance());
 			} else {
-				drive.stop();
+				drive.mecanum(0, 0.2, 0);
 				retval = true;
 			}
 		}

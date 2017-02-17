@@ -89,7 +89,7 @@ public class Dashboard {
 		return ds.getAlliance();
 	}
 
-	public void viewCamera(int device) {
-		SmartDashboard.putNumber("Selected Camera", device);
+	public void viewCamera(String deviceName) {
+		SmartDashboard.putString("Selected Camera Name", deviceName);
 	}
 }

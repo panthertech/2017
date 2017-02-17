@@ -7,7 +7,7 @@ import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.Servo;
 
 public class Shooter {
-	private static final double kTargetSpeed = 4500;
+	private static final double kTargetSpeed = 5100;
 	private static final double kAllowedSpeedDifference = 200;
 	private static final double kFeederShootPosition = 0.3;
 	private static final double kFeederHoldPosition = 0.0;

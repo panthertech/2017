@@ -6,12 +6,9 @@ public class DriveAuto extends AutonomousMode {
 
 	public DriveAuto(Robot robot) {
 		super(robot);
-		robot.drive.initDriveDistance(5);
 	}
 	
 	public void periodic () {
-		robot.drive.driveDistance();
+		robot.drive.driveDistance(5);
 	}
-	
-
 }

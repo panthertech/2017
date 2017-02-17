@@ -85,14 +85,14 @@ public class Drive {
 	}
 
 	private double angleToTurn, distanceToDrive;
-	
-	public void initTurn(double angle) {
-		angleToTurn = angle;
-		gyro.reset();
-	}
 
-	public boolean turn() {
+	public boolean turn(double angle) {
 		boolean retval = false;
+		
+		if(angleToTurn != angle) {
+			gyro.reset();
+			angleToTurn = angle;
+		}
 
 		if (angleToTurn < 0) {
 			if (gyro.getAngle() < angleToTurn) {
@@ -113,14 +113,15 @@ public class Drive {
 		return retval;
 	}
 	
-	public void initDriveDistance(double distance) {
-		distanceToDrive = distance;
-		gyro.reset();
-		resetDistance();
-	}
-
-	public boolean driveDistance() {
+	public boolean driveDistance(double distance) {
 		boolean retval = false;
+		
+		if(distanceToDrive != distance)
+		{
+			gyro.reset();
+			resetDistance();
+			distanceToDrive = distance;
+		}
 		
 		if(distanceToDrive < 0) {
 			if(getDistance() < distanceToDrive) {
