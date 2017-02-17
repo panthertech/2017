@@ -99,14 +99,14 @@ public class Drive {
 				retval = true;
 				robotDrive.stopMotor();
 			} else {
-				mecanum(0, 0, -0.5);
+				mecanum(0, 0, -0.25);
 			}
 		} else {
 			if(gyro.getAngle() > angleToTurn) {
 				retval = true;
 				robotDrive.stopMotor();
 			} else {
-				mecanum(0, 0, 0.5);
+				mecanum(0, 0, 0.25);
 			}
 		}
 

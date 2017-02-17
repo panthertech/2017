@@ -140,8 +140,9 @@ public class Robot extends IterativeRobot {
 			intake.maintain();
 		}
 
-		if (oi.shooterEnable()) {
+		if (oi.shooterEnable() || oi.shoot()) {
 			shooter.enableShooter();
+			intake.off();
 		}
 		if (oi.shooterDisable()) {
 			shooter.disableShooter();
@@ -176,10 +177,11 @@ public class Robot extends IterativeRobot {
 		boolean retval = false;
 		
 		if(!turnComplete) {
-			//turnComplete = drive.turn(gearCamera.getTargetAngle());
+			turnComplete = drive.turn(gearCamera.getTargetAngle());
 			distanceComplete = false;
 		} else {
 			if(!distanceComplete) {
+				drive.stop();
 				//distanceComplete = drive.driveDistance(gearCamera.getTargetDistance());
 			} else {
 				drive.mecanum(0, 0.2, 0);
