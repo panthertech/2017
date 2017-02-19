@@ -36,7 +36,8 @@ public class Robot extends IterativeRobot {
 	public Camera boilerCamera;
 	
 	/* Variables for managing automatic gear placement */
-	boolean placeGearInit, turnComplete, distanceComplete;
+	enum PlaceGearStates { Init, TurnInit, Turning, DriveInit, Driving, Done}
+	private PlaceGearStates placeGearState;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -58,7 +59,7 @@ public class Robot extends IterativeRobot {
 		db.setAutoModes(autoModes);
 		db.viewCamera(kGearCameraName);
 		
-		placeGearInit = false;
+		placeGearState = PlaceGearStates.Init;
 	}
 
 	/**
@@ -112,14 +113,10 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		if (oi.placeGear()) {
-			if(!placeGearInit) {
-				initPlaceGear();
-				placeGearInit = true;
-			}
 			gearCamera.enableProcessing();
 			placeGear();
 		} else {
-			placeGearInit = false;
+			placeGearState = PlaceGearStates.Init;
 			gearCamera.disableProcessing();
 			drive.mecanum(oi.getDriveX(), oi.getDriveY(), oi.getDriveZ());
 		}
@@ -166,27 +163,36 @@ public class Robot extends IterativeRobot {
 
 	}
 	
-	public void initPlaceGear() {
-		turnComplete = false;
-	}
-	
 	/**
 	 * This function automatically drives the robot to place a gear on the lift
 	 */
 	public boolean placeGear() {
 		boolean retval = false;
 		
-		if(!turnComplete) {
-			turnComplete = drive.turn(gearCamera.getTargetAngle());
-			distanceComplete = false;
-		} else {
-			if(!distanceComplete) {
-				drive.stop();
-				//distanceComplete = drive.driveDistance(gearCamera.getTargetDistance());
-			} else {
-				drive.mecanum(0, 0.2, 0);
-				retval = true;
+		switch(placeGearState) {
+		case Init:
+		case TurnInit:
+			drive.turn(gearCamera.getTargetAngle());
+			placeGearState = PlaceGearStates.Turning;
+		case Turning:
+			if(drive.onTarget()) {
+				placeGearState = PlaceGearStates.DriveInit;
 			}
+			break;
+		case DriveInit:
+			drive.driveDistance(gearCamera.getTargetDistance(), gearCamera.getTargetAngle());
+			placeGearState = PlaceGearStates.Driving;
+		case Driving:
+			if(drive.onTarget()) {
+				placeGearState = PlaceGearStates.Done;
+			}
+			break;
+		case Done:
+			retval = true;
+			break;
+		default:
+			placeGearState = PlaceGearStates.Init;
+			break;
 		}
 		
 		return retval;

@@ -3,18 +3,32 @@ package org.usfirst.frc.team292.robot;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Drive {
-	RobotDrive robotDrive;
-	CANTalon frontLeftTalon;
-	CANTalon frontRightTalon;
-	CANTalon rearLeftTalon;
-	CANTalon rearRightTalon;
-	Gyro gyro;
+	private static final double kDriveP = 0.01;
+	private static final double kDriveI = 0.0;
+	private static final double kDriveD = 0.0;
+	private static final double kTurnP = 0.01;
+	private static final double kTurnI = 0.0;
+	private static final double kTurnD = 0.0;
+	
+	private RobotDrive robotDrive;
+	private CANTalon frontLeftTalon;
+	private CANTalon frontRightTalon;
+	private CANTalon rearLeftTalon;
+	private CANTalon rearRightTalon;
+	private NavModule gyro;
+	private PIDController drivePID;
+	private PIDController turnPID;
+	private double drivePIDOutputValue;
+	private double turnPIDOutputValue;
 
-	public Drive(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort, Gyro gyro) {
+	public Drive(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort, NavModule gyro) {
 		frontLeftTalon = new CANTalon(frontLeftPort);
 		frontLeftTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
 		frontLeftTalon.setInverted(false);
@@ -38,18 +52,15 @@ public class Drive {
 		robotDrive = new RobotDrive(frontLeftTalon, rearLeftTalon, frontRightTalon, rearRightTalon);
 		
 		this.gyro = gyro;
+
+		drivePID = new PIDController(kDriveP, kDriveI, kDriveD, new DrivePIDSource(), new DrivePIDOutput());
+		turnPID = new PIDController(kTurnP, kTurnI, kTurnD, gyro, new TurnPIDOutput());
 	}
 
 	public void mecanum(double x, double y, double z) {
-		mecanum(x, y, z, false);
-	}
-
-	public void mecanum(double x, double y, double z, boolean useGyroAngle) {
-		if(useGyroAngle) {
-			robotDrive.mecanumDrive_Cartesian(x, y, z, gyro.getAngle());
-		} else {
-			robotDrive.mecanumDrive_Cartesian(x, y, z, 0);
-		}
+		drivePID.disable();
+		turnPID.disable();
+		robotDrive.mecanumDrive_Cartesian(x, y, z, 0);
 	}
 	
 	public void stop() {
@@ -84,61 +95,56 @@ public class Drive {
 				+ rearRightTalon.getPosition()) / 4;
 	}
 
-	private double angleToTurn, distanceToDrive;
-
-	public boolean turn(double angle) {
-		boolean retval = false;
-		
-		if(angleToTurn != angle) {
-			gyro.reset();
-			angleToTurn = angle;
-		}
-
-		if (angleToTurn < 0) {
-			if (gyro.getAngle() < angleToTurn) {
-				retval = true;
-				robotDrive.stopMotor();
-			} else {
-				mecanum(0, 0, -0.25);
-			}
-		} else {
-			if(gyro.getAngle() > angleToTurn) {
-				retval = true;
-				robotDrive.stopMotor();
-			} else {
-				mecanum(0, 0, 0.25);
-			}
-		}
-
-		return retval;
+	public void turn(double angle) {
+		turnPID.setSetpoint(angle);
+		turnPID.enable();
 	}
 	
-	public boolean driveDistance(double distance) {
-		boolean retval = false;
-		
-		if(distanceToDrive != distance)
-		{
-			gyro.reset();
-			resetDistance();
-			distanceToDrive = distance;
+	public void driveDistance(double distance) {
+		driveDistance(distance, gyro.getAngle());
+	}
+	
+	public void driveDistance(double distance, double angle) {
+		drivePID.setSetpoint(distance);
+		turnPID.setSetpoint(angle);
+		drivePID.enable();
+		turnPID.enable();
+	}
+	
+	public boolean onTarget() {
+		return ((!drivePID.isEnabled() || drivePID.onTarget()) && (!turnPID.isEnabled() || turnPID.onTarget()));
+	}
+
+	private class DrivePIDOutput implements PIDOutput {
+		@Override
+		public void pidWrite(double output) {
+			drivePIDOutputValue = output;
+			robotDrive.mecanumDrive_Cartesian(0, drivePIDOutputValue, turnPIDOutputValue, 0);
 		}
-		
-		if(distanceToDrive < 0) {
-			if(getDistance() < distanceToDrive) {
-				retval = true;
-				robotDrive.stopMotor();
-			} else {
-				mecanum(0, -0.5, 0);
-			}
-		} else {
-			if(getDistance() > distanceToDrive) {
-				retval = true;
-				robotDrive.stopMotor();
-			} else {
-				mecanum(0, 0.5, 0);
-			}
+	}
+
+	private class TurnPIDOutput implements PIDOutput {
+		@Override
+		public void pidWrite(double output) {
+			turnPIDOutputValue = output;
+			robotDrive.mecanumDrive_Cartesian(0, drivePIDOutputValue, turnPIDOutputValue, 0);
 		}
-		
-		return retval;
+	}
+	
+	private class DrivePIDSource implements PIDSource {
+		@Override
+		public void setPIDSourceType(PIDSourceType pidSource) {
+			
+		}
+
+		@Override
+		public PIDSourceType getPIDSourceType() {
+			return PIDSourceType.kDisplacement;
+		}
+
+		@Override
+		public double pidGet() {
+			return getDistance();
+		}
 	}
 }
