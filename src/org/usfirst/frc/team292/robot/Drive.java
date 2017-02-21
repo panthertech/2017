@@ -19,7 +19,7 @@ public class Drive {
 	private static final double kTurnD = 0.001;
 	private static final double kTurnTolerance = 0.5;
 	
-	private static final double kDistanceToRotationRatio = 25.0;
+	private static final double kDistanceToRotationRatio = 8.0 * Math.PI;
 	
 	private RobotDrive robotDrive;
 	private CANTalon frontLeftTalon;
@@ -101,14 +101,15 @@ public class Drive {
 				+ rearRightTalon.getPosition()) / 4.0;
 	}
 	
-	public void disablePID() {
-		drivePID.disable();
-		turnPID.disable();
+	private void resetPID() {
+		drivePID.reset();
+		turnPID.reset();
 		drivePIDOutputValue = 0.0;
 		turnPIDOutputValue = 0.0;
 	}
-
+	
 	public void turn(double angle) {
+		resetPID();
 		turnPID.setSetpoint(angle);
 		turnPID.enable();
 	}
@@ -118,6 +119,7 @@ public class Drive {
 	}
 	
 	public void driveDistance(double distance, double angle) {
+		resetPID();
 		drivePID.setSetpoint(distance / kDistanceToRotationRatio);
 		turnPID.setSetpoint(angle);
 		drivePID.enable();
@@ -131,8 +133,8 @@ public class Drive {
 	private class DrivePIDOutput implements PIDOutput {
 		@Override
 		public void pidWrite(double output) {
-			drivePIDOutputValue = output;
-			robotDrive.mecanumDrive_Cartesian(0, -drivePIDOutputValue, turnPIDOutputValue, 0);
+			drivePIDOutputValue = -output;
+			robotDrive.mecanumDrive_Cartesian(0, drivePIDOutputValue, turnPIDOutputValue, 0);
 		}
 	}
 

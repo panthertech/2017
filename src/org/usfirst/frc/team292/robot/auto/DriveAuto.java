@@ -6,7 +6,6 @@ public class DriveAuto extends AutonomousMode {
 
 	public DriveAuto(Robot robot) {
 		super(robot);
-		robot.drive.disablePID();
 		robot.drive.resetDistance();
 		robot.nav.reset();
 		robot.drive.driveDistance(12, 0);
