@@ -10,12 +10,16 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.RobotDrive;
 
 public class Drive {
-	private static final double kDriveP = 0.01;
-	private static final double kDriveI = 0.0;
-	private static final double kDriveD = 0.0;
+	private static final double kDriveP = 0.75;
+	private static final double kDriveI = 0.01;
+	private static final double kDriveD = 0.00001;
+	private static final double kDriveTolerance = 0.1;
 	private static final double kTurnP = 0.01;
-	private static final double kTurnI = 0.0;
-	private static final double kTurnD = 0.0;
+	private static final double kTurnI = 0.001;
+	private static final double kTurnD = 0.001;
+	private static final double kTurnTolerance = 0.5;
+	
+	private static final double kDistanceToRotationRatio = 25.0;
 	
 	private RobotDrive robotDrive;
 	private CANTalon frontLeftTalon;
@@ -54,7 +58,9 @@ public class Drive {
 		this.gyro = gyro;
 
 		drivePID = new PIDController(kDriveP, kDriveI, kDriveD, new DrivePIDSource(), new DrivePIDOutput());
+		drivePID.setAbsoluteTolerance(kDriveTolerance);
 		turnPID = new PIDController(kTurnP, kTurnI, kTurnD, gyro, new TurnPIDOutput());
+		turnPID.setAbsoluteTolerance(kTurnTolerance);
 	}
 
 	public void mecanum(double x, double y, double z) {
@@ -92,7 +98,14 @@ public class Drive {
 
 	public double getDistance() {
 		return (frontLeftTalon.getPosition() + rearLeftTalon.getPosition() + frontRightTalon.getPosition()
-				+ rearRightTalon.getPosition()) / 4;
+				+ rearRightTalon.getPosition()) / 4.0;
+	}
+	
+	public void disablePID() {
+		drivePID.disable();
+		turnPID.disable();
+		drivePIDOutputValue = 0.0;
+		turnPIDOutputValue = 0.0;
 	}
 
 	public void turn(double angle) {
@@ -105,7 +118,7 @@ public class Drive {
 	}
 	
 	public void driveDistance(double distance, double angle) {
-		drivePID.setSetpoint(distance);
+		drivePID.setSetpoint(distance / kDistanceToRotationRatio);
 		turnPID.setSetpoint(angle);
 		drivePID.enable();
 		turnPID.enable();
@@ -119,7 +132,7 @@ public class Drive {
 		@Override
 		public void pidWrite(double output) {
 			drivePIDOutputValue = output;
-			robotDrive.mecanumDrive_Cartesian(0, drivePIDOutputValue, turnPIDOutputValue, 0);
+			robotDrive.mecanumDrive_Cartesian(0, -drivePIDOutputValue, turnPIDOutputValue, 0);
 		}
 	}
 

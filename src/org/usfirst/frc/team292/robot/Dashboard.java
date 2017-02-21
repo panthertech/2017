@@ -45,6 +45,11 @@ public class Dashboard {
 					SmartDashboard.putNumber("Wheel Position Rear Left", robot.drive.getRearLeftPosition());
 					SmartDashboard.putNumber("Wheel Position Front Right", robot.drive.getFrontRightPosition());
 					SmartDashboard.putNumber("Wheel Position Rear Right", robot.drive.getRearRightPosition());
+					SmartDashboard.putNumber("Gyro Angle", robot.nav.getAngle());
+					SmartDashboard.putNumber("Camera Target Angle", robot.gearCamera.getTargetAngle());
+					SmartDashboard.putNumber("Camera Target Distance", robot.gearCamera.getTargetDistance());
+					SmartDashboard.putString("Place Gear State", robot.placeGearState.toString());
+					SmartDashboard.putNumber("Drive Distance", robot.drive.getDistance());
 				} catch (NullPointerException e) {
                     DriverStation.reportError("Dashboard Error: " + e.toString(), true);
 				}

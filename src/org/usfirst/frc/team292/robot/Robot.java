@@ -1,6 +1,6 @@
 package org.usfirst.frc.team292.robot;
 
-import org.usfirst.frc.team292.robot.auto.AutonomousMode;
+import org.usfirst.frc.team292.robot.auto.*;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 
@@ -37,7 +37,7 @@ public class Robot extends IterativeRobot {
 	
 	/* Variables for managing automatic gear placement */
 	enum PlaceGearStates { Init, TurnInit, Turning, DriveInit, Driving, Done}
-	private PlaceGearStates placeGearState;
+	public PlaceGearStates placeGearState;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -81,6 +81,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		switch (db.getSelectedAutoMode()) {
+		case customAuto:
+			auto = new DriveAuto(this);
+			break;
 		case defaultAuto:
 		default:
 			auto = new AutonomousMode(this);
