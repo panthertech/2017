@@ -31,7 +31,7 @@ public class Robot extends IterativeRobot {
 	public Shooter shooter;
 	public GearSensor gearSensor;
 	public OperatorInterface oi;
-	public NavModule nav;
+	public NavModule gyro;
 	public Camera gearCamera;
 	public Camera boilerCamera;
 	
@@ -45,15 +45,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		nav = new NavModule();
-		drive = new Drive(0, 1, 2, 3, nav);
+		gyro = new NavModule();
+		drive = new Drive(0, 1, 2, 3, gyro);
 		climber = new Climber(6);
 		intake = new Intake(4);
 		shooter = new Shooter(5, 6);
 		gearSensor = new GearSensor(8);
 		oi = new OperatorInterface();
-		gearCamera = new GearCamera(kGearCameraName, kGearCameraId, nav, 3);
-		boilerCamera = new BoilerCamera(kBoilerCameraName, kBoilerCameraId, nav, 2);
+		gearCamera = new GearCamera(kGearCameraName, kGearCameraId, gyro, 3);
+		boilerCamera = new BoilerCamera(kBoilerCameraName, kBoilerCameraId, gyro, 2);
 
 		db = new Dashboard(this);
 		db.setAutoModes(autoModes);
@@ -116,6 +116,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		if (oi.placeGear()) {
+			if(drive.pidIsEnabled()) {
+				drive.resetPID();
+			}
 			gearCamera.enableProcessing();
 			placeGear();
 		} else {
@@ -183,7 +186,7 @@ public class Robot extends IterativeRobot {
 			}
 			break;
 		case DriveInit:
-			drive.driveDistance(gearCamera.getTargetDistance(), gearCamera.getTargetAngle());
+			drive.driveDistance(gearCamera.getTargetDistance() + drive.getDistance(), gearCamera.getTargetAngle());
 			placeGearState = PlaceGearStates.Driving;
 		case Driving:
 			if(drive.onTarget()) {
@@ -191,6 +194,10 @@ public class Robot extends IterativeRobot {
 			}
 			break;
 		case Done:
+			if(!gearCamera.onTarget()) {
+				drive.setTurnAngle(gearCamera.getTargetAngle());
+				placeGearState = PlaceGearStates.Turning;
+			}
 			retval = true;
 			break;
 		default:

@@ -59,7 +59,7 @@ public class Camera {
 			double centerX = r.x + (r.height / 2);
 			double offset = centerX - (IMG_WIDTH / 2);
 			double scaleOffset = offset / (IMG_WIDTH);
-			targetAngle = scaleOffset * FOV / 2;
+			targetAngle = gyro.getAngle() + scaleOffset * FOV / 2;
 			lastValidAngle = gyro.getAngle();
 			
 			double width = r.width;
@@ -74,7 +74,11 @@ public class Camera {
 	 * @return The angle of the target 
 	 */
 	public double getTargetAngle() {
-		return lastValidAngle - gyro.getAngle() + targetAngle;
+		return targetAngle;
+	}
+	
+	public boolean onTarget() {
+		return (Math.abs(targetAngle - gyro.getAngle()) < 0.5);
 	}
 
 

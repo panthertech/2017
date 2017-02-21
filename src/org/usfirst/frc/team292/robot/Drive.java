@@ -10,13 +10,13 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.RobotDrive;
 
 public class Drive {
-	private static final double kDriveP = 0.75;
+	private static final double kDriveP = 1.0;
 	private static final double kDriveI = 0.01;
 	private static final double kDriveD = 0.00001;
 	private static final double kDriveTolerance = 0.1;
-	private static final double kTurnP = 0.01;
-	private static final double kTurnI = 0.001;
-	private static final double kTurnD = 0.001;
+	private static final double kTurnP = 0.02;
+	private static final double kTurnI = 0.00005;
+	private static final double kTurnD = 0.025;
 	private static final double kTurnTolerance = 0.5;
 	
 	private static final double kDistanceToRotationRatio = 8.0 * Math.PI;
@@ -59,13 +59,13 @@ public class Drive {
 
 		drivePID = new PIDController(kDriveP, kDriveI, kDriveD, new DrivePIDSource(), new DrivePIDOutput());
 		drivePID.setAbsoluteTolerance(kDriveTolerance);
+		drivePID.reset();
 		turnPID = new PIDController(kTurnP, kTurnI, kTurnD, gyro, new TurnPIDOutput());
 		turnPID.setAbsoluteTolerance(kTurnTolerance);
+		turnPID.reset();
 	}
 
 	public void mecanum(double x, double y, double z) {
-		drivePID.disable();
-		turnPID.disable();
 		robotDrive.mecanumDrive_Cartesian(x, y, z, 0);
 	}
 	
@@ -101,7 +101,11 @@ public class Drive {
 				+ rearRightTalon.getPosition()) / 4.0;
 	}
 	
-	private void resetPID() {
+	public boolean pidIsEnabled() {
+		return (drivePID.isEnabled() || turnPID.isEnabled());
+	}
+	
+	public void resetPID() {
 		drivePID.reset();
 		turnPID.reset();
 		drivePIDOutputValue = 0.0;
@@ -112,6 +116,10 @@ public class Drive {
 		resetPID();
 		turnPID.setSetpoint(angle);
 		turnPID.enable();
+	}
+	
+	public void setTurnAngle(double angle) {
+		turnPID.setSetpoint(angle);
 	}
 	
 	public void driveDistance(double distance) {
@@ -126,8 +134,16 @@ public class Drive {
 		turnPID.enable();
 	}
 	
+	public void setDriveDistance(double distance) {
+		drivePID.setSetpoint(distance);
+	}
+	
 	public boolean onTarget() {
 		return ((!drivePID.isEnabled() || drivePID.onTarget()) && (!turnPID.isEnabled() || turnPID.onTarget()));
+	}
+	
+	public boolean onTargetAngle() {
+		return (turnPID.onTarget());
 	}
 
 	private class DrivePIDOutput implements PIDOutput {

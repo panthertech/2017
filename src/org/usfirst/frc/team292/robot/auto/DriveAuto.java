@@ -7,7 +7,7 @@ public class DriveAuto extends AutonomousMode {
 	public DriveAuto(Robot robot) {
 		super(robot);
 		robot.drive.resetDistance();
-		robot.nav.reset();
+		robot.gyro.reset();
 		robot.drive.driveDistance(12, 0);
 	}
 	
