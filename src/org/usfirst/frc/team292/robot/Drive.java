@@ -112,7 +112,10 @@ public class Drive {
 		turnPIDOutputValue = 0.0;
 	}
 	
-	public void turn(double angle) {
+	public void turn(double angle, boolean resetAngle) {
+		if(resetAngle) {
+			gyro.reset();
+		}
 		resetPID();
 		turnPID.setSetpoint(angle);
 		turnPID.enable();
@@ -123,12 +126,15 @@ public class Drive {
 	}
 	
 	public void driveDistance(double distance) {
-		driveDistance(distance, gyro.getAngle());
+		driveDistance(distance, gyro.getAngle(), false);
 	}
 	
-	public void driveDistance(double distance, double angle) {
+	public void driveDistance(double distance, double angle, boolean resetAngle) {
+		if(resetAngle) {
+			gyro.reset();
+		}
 		resetPID();
-		drivePID.setSetpoint(distance / kDistanceToRotationRatio);
+		drivePID.setSetpoint(distance / kDistanceToRotationRatio + getDistance());
 		turnPID.setSetpoint(angle);
 		drivePID.enable();
 		turnPID.enable();

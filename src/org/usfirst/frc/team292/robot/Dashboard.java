@@ -13,7 +13,7 @@ public class Dashboard {
 	private SmartDashboard db;
 
 	public enum StartingPosition {
-		Left, Middle, Right;
+		RedLeft, RedMiddle, RedRight, BlueLeft, BlueMiddle, BlueRight, Invalid;
 	}
 
 	public Dashboard(Robot robot) {
@@ -77,14 +77,49 @@ public class Dashboard {
 		StartingPosition pos;
 		switch ((int) SmartDashboard.getNumber("Starting Position", 1)) {
 		case 0:
-			pos = StartingPosition.Left;
-			break;
-		case 2:
-			pos = StartingPosition.Right;
+			switch(getAlliance()) {
+			case Red:
+				pos = StartingPosition.RedLeft;
+				break;
+			case Blue:
+				pos = StartingPosition.BlueLeft;
+				break;
+			case Invalid:
+			default:
+				pos = StartingPosition.Invalid;
+				break;
+			}
 			break;
 		case 1:
+			switch(getAlliance()) {
+			case Red:
+				pos = StartingPosition.RedMiddle;
+				break;
+			case Blue:
+				pos = StartingPosition.BlueMiddle;
+				break;
+			case Invalid:
+			default:
+				pos = StartingPosition.Invalid;
+				break;
+			}
+			break;
+		case 2:
+			switch(getAlliance()) {
+			case Red:
+				pos = StartingPosition.RedRight;
+				break;
+			case Blue:
+				pos = StartingPosition.BlueRight;
+				break;
+			case Invalid:
+			default:
+				pos = StartingPosition.Invalid;
+				break;
+			}
+			break;
 		default:
-			pos = StartingPosition.Middle;
+			pos = StartingPosition.Invalid;
 			break;
 		}
 		return pos;

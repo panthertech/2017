@@ -2,18 +2,15 @@ package org.usfirst.frc.team292.robot.auto;
 
 import org.usfirst.frc.team292.robot.*;
 
-/*
- * This basic autonomous mode should do nothing and can be extended by other modes
- */
-public class AutonomousMode {
+public abstract class AutonomousMode {
 	Robot robot;
 	
 	public AutonomousMode(Robot robot) {
 		this.robot = robot;
+		robot.drive.resetDistance();
+		robot.gyro.reset();
 	}
 	
-	public void periodic() {
-		
-	}
+	public abstract void periodic();
 	
 }

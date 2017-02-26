@@ -3,6 +3,7 @@ package org.usfirst.frc.team292.robot;
 import org.usfirst.frc.team292.robot.auto.*;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -18,10 +19,12 @@ public class Robot extends IterativeRobot {
 	private static final String kBoilerCameraName = "Boiler Camera";
 	public static final double kRobotLength = 40;
 	
-	final String defaultAuto = "Default";
-	final String customAuto = "My Auto";
+	final String doNothingAuto = "Do Nothing";
+	final String crossLineAuto = "Cross Line";
+	final String scoreGearAuto = "Score Gear";
+	final String scoreGearCrossLineAuto = "Score Gear & Cross Line";
 	/* The first entry in the autoModes array will be the default mode */
-	final String[] autoModes = {defaultAuto, customAuto};
+	final String[] autoModes = {doNothingAuto, crossLineAuto, scoreGearAuto, scoreGearCrossLineAuto};
 	
 	public AutonomousMode auto;
 	public Dashboard db;
@@ -38,6 +41,8 @@ public class Robot extends IterativeRobot {
 	/* Variables for managing automatic gear placement */
 	enum PlaceGearStates { Init, TurnInit, Turning, DriveInit, Driving, Done}
 	public PlaceGearStates placeGearState;
+	public double placeGearLastAngle;
+	public double placeGearLastUpdateTime;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -81,14 +86,48 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		switch (db.getSelectedAutoMode()) {
-		case customAuto:
-			auto = new DriveAuto(this);
+		case crossLineAuto:
+			auto = new CrossLine(this);
 			break;
-		case defaultAuto:
+		case scoreGearAuto:
+			switch(db.getStartingPosition()) {
+			case RedLeft:
+				auto = new ScoreGearRedLeft(this);
+				break;
+			case BlueLeft:
+				auto = new ScoreGearBlueLeft(this);
+				break;
+			case RedMiddle:
+			case BlueMiddle:
+				auto = new ScoreGearMiddle(this);
+				break;
+			case RedRight:
+				auto = new ScoreGearRedRight(this);
+				break;
+			case BlueRight:
+				auto = new ScoreGearBlueRight(this);
+				break;
+			default:
+				break;
+			}
+			break;
+		case scoreGearCrossLineAuto:
+			switch(db.getStartingPosition()) {
+			case RedMiddle:
+			case BlueMiddle:
+				auto = new ScoreGearCrossLineMiddle(this);
+				break;
+			default:
+				break;
+			}
+			break;
+		case doNothingAuto:
 		default:
-			auto = new AutonomousMode(this);
+			auto = new DoNothing(this);
 			break;
 		}
+		
+		if(auto == null) auto = new DoNothing(this);
 	}
 
 	/**
@@ -175,10 +214,24 @@ public class Robot extends IterativeRobot {
 	public boolean placeGear() {
 		boolean retval = false;
 		
+		/* Check for a large change in the target angle */
+		if(Math.abs(placeGearLastAngle - gearCamera.getTargetAngle()) > 5.0) {
+			placeGearState = PlaceGearStates.Init;
+		}
+		placeGearLastAngle = gearCamera.getTargetAngle();
+		
+		if(Timer.getFPGATimestamp() - placeGearLastUpdateTime > 0.5) {
+			drive.setTurnAngle(gearCamera.getTargetAngle());
+			placeGearLastUpdateTime = Timer.getFPGATimestamp();
+			if(placeGearState == PlaceGearStates.Driving) {
+				drive.setDriveDistance(gearCamera.getTargetDistance() + 6.0);
+			}
+		}
+		
 		switch(placeGearState) {
 		case Init:
 		case TurnInit:
-			drive.turn(gearCamera.getTargetAngle());
+			drive.driveDistance(0.0, gearCamera.getTargetAngle(), false);
 			placeGearState = PlaceGearStates.Turning;
 		case Turning:
 			if(drive.onTarget()) {
@@ -186,7 +239,7 @@ public class Robot extends IterativeRobot {
 			}
 			break;
 		case DriveInit:
-			drive.driveDistance(gearCamera.getTargetDistance() + drive.getDistance(), gearCamera.getTargetAngle());
+			drive.driveDistance(gearCamera.getTargetDistance(), gearCamera.getTargetAngle(), false);
 			placeGearState = PlaceGearStates.Driving;
 		case Driving:
 			if(drive.onTarget()) {
@@ -194,14 +247,9 @@ public class Robot extends IterativeRobot {
 			}
 			break;
 		case Done:
-			if(!gearCamera.onTarget()) {
-				drive.setTurnAngle(gearCamera.getTargetAngle());
-				placeGearState = PlaceGearStates.Turning;
-			}
 			retval = true;
 			break;
 		default:
-			placeGearState = PlaceGearStates.Init;
 			break;
 		}
 		
