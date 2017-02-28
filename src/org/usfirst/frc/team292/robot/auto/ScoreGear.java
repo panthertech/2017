@@ -5,13 +5,15 @@ import org.usfirst.frc.team292.robot.*;
 import edu.wpi.first.wpilibj.Timer;
 
 public abstract class ScoreGear extends AutonomousMode {
-	public static final double kDriveOutDistance = 0.0;
-	public static final double kTurnAngle = 0.0;
-	public static final double kDriveToLiftDistance = 0.0;
 	public static final double kMinOnTargetTime = 0.25;
 	
+	public double driveOutDistance;
+	public double turnAngle;
+	public double driveToLiftDistance;
+	
 	private ScoreGearStates scoreGearState;
-	private double lastOffTargetTime;
+	private double lastOffTargetAngleTime;
+	private double lastOffTargetDistanceTime;
 	
 	private enum ScoreGearStates {
 		Init,
@@ -26,7 +28,11 @@ public abstract class ScoreGear extends AutonomousMode {
 		super(robot);
 		robot.gearCamera.enableProcessing();
 		scoreGearState = ScoreGearStates.Init;
-		lastOffTargetTime = Timer.getFPGATimestamp();
+		lastOffTargetAngleTime = Timer.getFPGATimestamp();
+		lastOffTargetDistanceTime = Timer.getFPGATimestamp();
+		driveOutDistance = 0.0;
+		turnAngle = 0.0;
+		driveToLiftDistance = 0.0;
 	}
 
 	@Override
@@ -34,15 +40,29 @@ public abstract class ScoreGear extends AutonomousMode {
 		scoreGear();
 	}
 	
-	public boolean onTarget() {
+	public boolean onTargetAngle() {
 		boolean onTarget = false;
 		
-		if(robot.drive.onTarget()) {
-			if(Timer.getFPGATimestamp() - lastOffTargetTime > kMinOnTargetTime) {
+		if(robot.drive.onTargetAngle()) {
+			if(Timer.getFPGATimestamp() - lastOffTargetAngleTime > kMinOnTargetTime) {
 				onTarget = true;
 			}
 		} else {
-			lastOffTargetTime = Timer.getFPGATimestamp();
+			lastOffTargetAngleTime = Timer.getFPGATimestamp();
+		}
+		
+		return onTarget;
+	}
+	
+	public boolean onTargetDistance() {
+		boolean onTarget = false;
+		
+		if(robot.drive.onTargetDistance()) {
+			if(Timer.getFPGATimestamp() - lastOffTargetDistanceTime > kMinOnTargetTime) {
+				onTarget = true;
+			}
+		} else {
+			lastOffTargetDistanceTime = Timer.getFPGATimestamp();
 		}
 		
 		return onTarget;
@@ -53,24 +73,25 @@ public abstract class ScoreGear extends AutonomousMode {
 		
 		switch(scoreGearState) {
 		case Init:
-			robot.drive.driveDistance(kDriveOutDistance);
+			robot.drive.driveDistance(driveOutDistance);
 			scoreGearState = ScoreGearStates.DriveOut;
 			break;
 		case DriveOut:
-			if(onTarget()) {
-				robot.drive.turn(kTurnAngle, true);
+			if(onTargetDistance()) {
+				robot.drive.turn(turnAngle, true);
 				scoreGearState = ScoreGearStates.Turn;
 			}
 			break;
 		case Turn:
-			if(onTarget()) {
-				robot.drive.driveDistance(kDriveToLiftDistance);
+			if(onTargetAngle()) {
+				robot.drive.driveDistance(driveToLiftDistance);
 				scoreGearState = ScoreGearStates.DriveToLift;
 			}
 			break;
 		case DriveToLift:
-			if(onTarget()) {
+			if(onTargetDistance()) {
 				scoreGearState = ScoreGearStates.ScoreGear;
+				robot.placeGearInit();
 			}
 			break;
 		case ScoreGear:

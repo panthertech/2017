@@ -39,7 +39,8 @@ public class Camera {
 				process(pipeline);
 			} else {
 				light.set(false);
-				targetAngle = lastValidAngle = dist = 0;
+				targetAngle = lastValidAngle = gyro.getAngle();
+				dist = 0;
 			}
 		});
 		visionThread.start();

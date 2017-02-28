@@ -50,6 +50,8 @@ public class Dashboard {
 					SmartDashboard.putNumber("Camera Target Distance", robot.gearCamera.getTargetDistance());
 					SmartDashboard.putString("Place Gear State", robot.placeGearState.toString());
 					SmartDashboard.putNumber("Drive Distance", robot.drive.getDistance());
+					SmartDashboard.putNumber("Place Gear Angle", robot.placeGearAngle);
+					SmartDashboard.putNumber("Place Gear Distance", robot.placeGearDistance);
 				} catch (NullPointerException e) {
                     DriverStation.reportError("Dashboard Error: " + e.toString(), true);
 				}

@@ -41,9 +41,6 @@ public class GearCamera extends Camera {
 				double widthX2 = r2.width;
 				double width = (widthX1 + widthX2) / 2;
 				dist = (TARGET_WIDTH * FOCAL_LENGTH) / width;
-				
-				SmartDashboard.putNumber("Camera Angle", targetAngle);
-				SmartDashboard.putNumber("Camera Distance", dist);
 			}
 		}
 	}

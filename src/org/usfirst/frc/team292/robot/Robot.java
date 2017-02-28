@@ -39,10 +39,11 @@ public class Robot extends IterativeRobot {
 	public Camera boilerCamera;
 	
 	/* Variables for managing automatic gear placement */
-	enum PlaceGearStates { Init, TurnInit, Turning, DriveInit, Driving, Done}
+	enum PlaceGearStates { Init, Acquire, TurnInit, Turning, DriveInit, Driving, Done}
 	public PlaceGearStates placeGearState;
-	public double placeGearLastAngle;
-	public double placeGearLastUpdateTime;
+	public double placeGearAngle;
+	public double placeGearDistance;
+	public double placeGearInitTime;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -85,6 +86,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		auto = null;
 		switch (db.getSelectedAutoMode()) {
 		case crossLineAuto:
 			auto = new CrossLine(this);
@@ -155,12 +157,12 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		if (oi.placeGear()) {
-			if(drive.pidIsEnabled()) {
-				drive.resetPID();
-			}
 			gearCamera.enableProcessing();
 			placeGear();
 		} else {
+			if(drive.pidIsEnabled()) {
+				drive.resetPID();
+			}
 			placeGearState = PlaceGearStates.Init;
 			gearCamera.disableProcessing();
 			drive.mecanum(oi.getDriveX(), oi.getDriveY(), oi.getDriveZ());
@@ -208,45 +210,51 @@ public class Robot extends IterativeRobot {
 
 	}
 	
+	public void placeGearInit() {
+		placeGearState = PlaceGearStates.Init;
+	}
+	
 	/**
 	 * This function automatically drives the robot to place a gear on the lift
 	 */
 	public boolean placeGear() {
 		boolean retval = false;
 		
-		/* Check for a large change in the target angle */
-		if(Math.abs(placeGearLastAngle - gearCamera.getTargetAngle()) > 5.0) {
-			placeGearState = PlaceGearStates.Init;
-		}
-		placeGearLastAngle = gearCamera.getTargetAngle();
-		
-		if(Timer.getFPGATimestamp() - placeGearLastUpdateTime > 0.5) {
-			drive.setTurnAngle(gearCamera.getTargetAngle());
-			placeGearLastUpdateTime = Timer.getFPGATimestamp();
-			if(placeGearState == PlaceGearStates.Driving) {
-				drive.setDriveDistance(gearCamera.getTargetDistance() + 6.0);
-			}
-		}
-		
 		switch(placeGearState) {
 		case Init:
+			placeGearAngle = gearCamera.getTargetAngle();
+			placeGearDistance = gearCamera.getTargetDistance();
+			placeGearInitTime = Timer.getFPGATimestamp();
+			placeGearState = PlaceGearStates.Acquire;
+			break;
+		case Acquire:
+			placeGearAngle = (placeGearAngle + gearCamera.getTargetAngle()) / 2.0;
+			placeGearDistance = (placeGearAngle + gearCamera.getTargetDistance()) / 2.0;
+			if(Timer.getFPGATimestamp() - placeGearInitTime > 0.5) {
+				placeGearState = PlaceGearStates.TurnInit;
+			}
+			break;
 		case TurnInit:
-			drive.driveDistance(0.0, gearCamera.getTargetAngle(), false);
+			drive.driveDistance(0.0, placeGearAngle, false);
 			placeGearState = PlaceGearStates.Turning;
 		case Turning:
-			if(drive.onTarget()) {
+			if(drive.onTargetAngle()) {
 				placeGearState = PlaceGearStates.DriveInit;
 			}
 			break;
 		case DriveInit:
-			drive.driveDistance(gearCamera.getTargetDistance(), gearCamera.getTargetAngle(), false);
+			drive.driveDistance(placeGearDistance + 6.0, placeGearAngle, false);
 			placeGearState = PlaceGearStates.Driving;
 		case Driving:
-			if(drive.onTarget()) {
+			if(drive.onTargetDistance()) {
 				placeGearState = PlaceGearStates.Done;
 			}
 			break;
 		case Done:
+			if(drive.pidIsEnabled()) {
+				drive.resetPID();
+			}
+			drive.mecanum(0.0, -0.2, 0.0);
 			retval = true;
 			break;
 		default:

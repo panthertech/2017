@@ -67,9 +67,16 @@ public abstract class ScoreGearCrossLine extends ScoreGear {
 			retval = true;
 		} else {
 			if(crossLineTargetInit) {
-				if(onTarget()) {
-					crossLineTargetIndex++;
-					crossLineTargetInit = false;
+				if(onTargetAngle()) {
+					if(crossLineTargets.get(crossLineTargetIndex).distance != 0.0) {
+						if(onTargetDistance()) {
+							crossLineTargetIndex++;
+							crossLineTargetInit = false;
+						}
+					} else {
+						crossLineTargetIndex++;
+						crossLineTargetInit = false;
+					}
 				}
 			} else {
 				if(crossLineTargets.get(crossLineTargetIndex).distance != 0.0) {
