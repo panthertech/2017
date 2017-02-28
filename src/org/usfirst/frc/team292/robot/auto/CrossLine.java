@@ -6,7 +6,7 @@ public class CrossLine extends AutonomousMode {
 
 	public CrossLine(Robot robot) {
 		super(robot);
-		robot.drive.driveDistance(200);
+		robot.drive.driveDistance(100);
 	}
 	
 	public void periodic () {

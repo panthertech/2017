@@ -72,7 +72,21 @@ public class Dashboard {
 	}
 
 	public String getSelectedAutoMode() {
-		return SmartDashboard.getString("Auto Selector", defaultMode);
+		boolean validMode = false;
+		String selectedMode = SmartDashboard.getString("Auto Selector", defaultMode);
+		
+		for(int i = 0; i < autoModes.length; i++) {
+			if(autoModes[i] == selectedMode) {
+				validMode = true;
+				break;
+			}
+		}
+		
+		if(!validMode) {
+			selectedMode = defaultMode;
+		}
+		
+		return selectedMode;
 	}
 
 	public StartingPosition getStartingPosition() {

@@ -22,9 +22,8 @@ public class Robot extends IterativeRobot {
 	final String doNothingAuto = "Do Nothing";
 	final String crossLineAuto = "Cross Line";
 	final String scoreGearAuto = "Score Gear";
-	final String scoreGearCrossLineAuto = "Score Gear & Cross Line";
 	/* The first entry in the autoModes array will be the default mode */
-	final String[] autoModes = {doNothingAuto, crossLineAuto, scoreGearAuto, scoreGearCrossLineAuto};
+	final String[] autoModes = {scoreGearAuto, crossLineAuto, doNothingAuto};
 	
 	public AutonomousMode auto;
 	public Dashboard db;
@@ -108,16 +107,6 @@ public class Robot extends IterativeRobot {
 				break;
 			case BlueRight:
 				auto = new ScoreGearBlueRight(this);
-				break;
-			default:
-				break;
-			}
-			break;
-		case scoreGearCrossLineAuto:
-			switch(db.getStartingPosition()) {
-			case RedMiddle:
-			case BlueMiddle:
-				auto = new ScoreGearCrossLineMiddle(this);
 				break;
 			default:
 				break;

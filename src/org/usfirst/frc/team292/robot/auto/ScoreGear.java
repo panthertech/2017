@@ -5,6 +5,17 @@ import org.usfirst.frc.team292.robot.*;
 import edu.wpi.first.wpilibj.Timer;
 
 public abstract class ScoreGear extends AutonomousMode {
+	public static final double kMiddleDriveToLiftDistance = 50.0;
+	
+	public static final double kBoilerSideDriveOutDistance = 60.0;
+	public static final double kBoilerSideDriveToLiftDistance = 25.0;
+	
+	public static final double kLoadingSideDriveOutDistance = 60.0;
+	public static final double kLoadingSideDriveToLiftDistance = 25.0;
+	
+	public static final double kLeftSideTurnAngle = 55.0;
+	public static final double kRightSideTurnAngle = -kLeftSideTurnAngle;
+	
 	public static final double kMinOnTargetTime = 0.25;
 	
 	public double driveOutDistance;
@@ -30,9 +41,6 @@ public abstract class ScoreGear extends AutonomousMode {
 		scoreGearState = ScoreGearStates.Init;
 		lastOffTargetAngleTime = Timer.getFPGATimestamp();
 		lastOffTargetDistanceTime = Timer.getFPGATimestamp();
-		driveOutDistance = 0.0;
-		turnAngle = 0.0;
-		driveToLiftDistance = 0.0;
 	}
 
 	@Override

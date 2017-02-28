@@ -10,16 +10,16 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.RobotDrive;
 
 public class Drive {
-	private static final double kDriveP = 0.5;
-	private static final double kDriveI = 0.0001;
-	private static final double kDriveD = 0.1;
-	private static final double kDriveTolerance = 0.5;
+	private static final double kDistanceToRotationRatio = 8.0 * Math.PI;
+	
+	private static final double kDriveP = 0.02;
+	private static final double kDriveI = 0.00001;
+	private static final double kDriveD = 0.005;
+	private static final double kDriveTolerance = 5.0;
 	private static final double kTurnP = 0.05;
 	private static final double kTurnI = 0.002;
 	private static final double kTurnD = 0.5;
 	private static final double kTurnTolerance = 0.5;
-	
-	private static final double kDistanceToRotationRatio = 8.0 * Math.PI;
 	
 	private RobotDrive robotDrive;
 	private CANTalon frontLeftTalon;
@@ -99,8 +99,9 @@ public class Drive {
 	}
 
 	public double getDistance() {
-		return (frontLeftTalon.getPosition() + rearLeftTalon.getPosition() + frontRightTalon.getPosition()
+		double averagePosition = (frontLeftTalon.getPosition() + rearLeftTalon.getPosition() + frontRightTalon.getPosition()
 				+ rearRightTalon.getPosition()) / 4.0;
+		return averagePosition * kDistanceToRotationRatio;
 	}
 	
 	public boolean pidIsEnabled() {
@@ -132,7 +133,7 @@ public class Drive {
 			gyro.reset();
 		}
 		resetPID();
-		drivePID.setSetpoint(distance / kDistanceToRotationRatio + getDistance());
+		drivePID.setSetpoint(distance + getDistance());
 		turnPID.setSetpoint(angle);
 		drivePID.enable();
 		turnPID.enable();
