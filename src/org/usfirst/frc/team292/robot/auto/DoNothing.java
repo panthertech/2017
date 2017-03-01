@@ -10,7 +10,7 @@ public class DoNothing extends AutonomousMode {
 
 	@Override
 	public void periodic() {
-		
+		robot.drive.stop();
 	}
 	
 }

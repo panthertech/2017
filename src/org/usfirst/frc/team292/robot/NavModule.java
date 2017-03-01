@@ -4,9 +4,9 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class NavModule implements Gyro, PIDSource {
@@ -15,8 +15,7 @@ public class NavModule implements Gyro, PIDSource {
 
 	public NavModule() {
 		try {
-			sensor = new AHRS(I2C.Port.kOnboard);
-
+			sensor = new AHRS(SerialPort.Port.kMXP);
 		} catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
 		}
@@ -25,7 +24,11 @@ public class NavModule implements Gyro, PIDSource {
 
 	@Override
 	public double getAngle() {
-		return gyro.getAngle();
+		double angle = gyro.getAngle();
+		if(navxIsAttached()) {
+			angle = sensor.getAngle();
+		}
+		return angle;
 	}
 
 	@Override
@@ -36,16 +39,22 @@ public class NavModule implements Gyro, PIDSource {
 	@Override
 	public void reset() {
 		gyro.reset();
+		sensor.zeroYaw();
 	}
 
 	@Override
 	public double getRate() {
-		return gyro.getRate();
+		double rate = gyro.getRate();
+		if(navxIsAttached()) {
+			rate = sensor.getRate();
+		}
+		return rate;
 	}
 
 	@Override
 	public void free() {
 		gyro.free();
+		sensor.free();
 	}
 
 	@Override
@@ -60,6 +69,23 @@ public class NavModule implements Gyro, PIDSource {
 
 	@Override
 	public double pidGet() {
-		return gyro.pidGet();
+		double get = gyro.pidGet();
+		if(navxIsAttached()) {
+			get = sensor.pidGet();
+		}
+		return get;
+	}
+	
+	public String getSensorType() {
+		String sensorType = "Analog Gyro";
+		if(navxIsAttached()) {
+			sensorType = "NavX";
+		}
+		return sensorType;
+	}
+	
+	public boolean navxIsAttached() {
+		//return sensor.isConnected() && !sensor.isCalibrating();
+		return false;
 	}
 }

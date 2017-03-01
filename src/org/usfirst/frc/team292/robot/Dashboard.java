@@ -52,6 +52,7 @@ public class Dashboard {
 					SmartDashboard.putNumber("Drive Distance", robot.drive.getDistance());
 					SmartDashboard.putNumber("Place Gear Angle", robot.placeGearAngle);
 					SmartDashboard.putNumber("Place Gear Distance", robot.placeGearDistance);
+					SmartDashboard.putString("Gyro Type", robot.gyro.getSensorType());
 				} catch (NullPointerException e) {
                     DriverStation.reportError("Dashboard Error: " + e.toString(), true);
 				}
@@ -76,7 +77,7 @@ public class Dashboard {
 		String selectedMode = SmartDashboard.getString("Auto Selector", defaultMode);
 		
 		for(int i = 0; i < autoModes.length; i++) {
-			if(autoModes[i] == selectedMode) {
+			if(autoModes[i].equals(selectedMode)) {
 				validMode = true;
 				break;
 			}

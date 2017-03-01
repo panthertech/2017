@@ -10,6 +10,12 @@ public class CrossLine extends AutonomousMode {
 	}
 	
 	public void periodic () {
-		
+		if(robot.drive.pidIsEnabled()) {
+			if(robot.drive.onTargetDistance()) {
+				robot.drive.resetPID();
+			}
+		} else {
+			robot.drive.stop();
+		}
 	}
 }
