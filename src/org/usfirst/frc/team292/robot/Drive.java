@@ -136,7 +136,7 @@ public class Drive {
 		drivePID.setSetpoint(distance + getDistance());
 		turnPID.setSetpoint(angle);
 		drivePID.enable();
-		//turnPID.enable();
+		turnPID.enable();
 	}
 	
 	public boolean onTargetDistance() {

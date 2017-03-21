@@ -86,6 +86,6 @@ public class NavModule implements Gyro, PIDSource {
 	
 	public boolean navxIsAttached() {
 		//return sensor.isConnected() && !sensor.isCalibrating();
-		return false;
+		return true;
 	}
 }
