@@ -29,8 +29,6 @@ public class Robot extends IterativeRobot {
 	public Dashboard db;
 	public Drive drive;
 	public Climber climber;
-	public Intake intake;
-	public Shooter shooter;
 	public GearSensor gearSensor;
 	public OperatorInterface oi;
 	public NavModule gyro;
@@ -52,9 +50,7 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		gyro = new NavModule();
 		drive = new Drive(0, 1, 2, 3, gyro);
-		climber = new Climber(6);
-		intake = new Intake(4);
-		shooter = new Shooter(5, 6);
+		climber = new Climber(5);
 		gearSensor = new GearSensor(8);
 		oi = new OperatorInterface();
 		gearCamera = new GearCamera(kGearCameraName, kGearCameraId, gyro, 3);
@@ -135,9 +131,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		oi.updateControllerTypes();
-		shooter.disableShooter();
 		climber.stop();
-		intake.off();
 	}
 
 	/**
@@ -164,23 +158,6 @@ public class Robot extends IterativeRobot {
 		} else {
 			climber.maintain();
 		}
-
-		if (oi.enableIntake()) {
-			intake.on();
-		} else if (oi.reverseIntake()) {
-			intake.reverse();
-		} else {
-			intake.maintain();
-		}
-
-		if (oi.shooterEnable() || oi.shoot()) {
-			shooter.enableShooter();
-			intake.off();
-		}
-		if (oi.shooterDisable()) {
-			shooter.disableShooter();
-		}
-		shooter.shoot(oi.shoot());
 	}
 
 	/**
