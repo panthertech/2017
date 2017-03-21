@@ -5,13 +5,13 @@ import org.usfirst.frc.team292.robot.*;
 import edu.wpi.first.wpilibj.Timer;
 
 public abstract class ScoreGear extends AutonomousMode {
-	public static final double kMiddleDriveToLiftDistance = 50.0;
+	public static final double kMiddleDriveToLiftDistance = 70.0;
 	
 	public static final double kBoilerSideDriveOutDistance = 60.0;
 	public static final double kBoilerSideDriveToLiftDistance = 25.0;
 	
 	public static final double kLoadingSideDriveOutDistance = 60.0;
-	public static final double kLoadingSideDriveToLiftDistance = 25.0;
+	public static final double kLoadingSideDriveToLiftDistance = 40.0;
 	
 	public static final double kLeftSideTurnAngle = 55.0;
 	public static final double kRightSideTurnAngle = -kLeftSideTurnAngle;
@@ -103,12 +103,17 @@ public abstract class ScoreGear extends AutonomousMode {
 			}
 			break;
 		case ScoreGear:
-			if(robot.placeGear() && !robot.gearSensor.gearPresent()) {
-				scoreGearState = ScoreGearStates.Done;
-			}
+//			if(robot.placeGear() && !robot.gearSensor.gearPresent()) {
+//				scoreGearState = ScoreGearStates.Done;
+//			}
+			scoreGearState = ScoreGearStates.Done;
 			break;
 		case Done:
 		default:
+			if(robot.drive.pidIsEnabled()) {
+				robot.drive.resetPID();
+			}
+			robot.drive.mecanum(0.0, -0.1, 0.0);
 			retval = true;
 			break;
 		}
