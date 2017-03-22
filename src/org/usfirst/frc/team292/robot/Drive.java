@@ -16,10 +16,10 @@ public class Drive {
 	private static final double kDriveI = 0.00001;
 	private static final double kDriveD = 0.005;
 	private static final double kDriveTolerance = 5.0;
-	private static final double kTurnP = 0.05;
-	private static final double kTurnI = 0.002;
-	private static final double kTurnD = 0.5;
-	private static final double kTurnTolerance = 0.5;
+	private static final double kTurnP = 0.004;
+	private static final double kTurnI = 0.000;
+	private static final double kTurnD = 0.05;
+	private static final double kTurnTolerance = 2.0;
 	
 	private RobotDrive robotDrive;
 	private CANTalon frontLeftTalon;

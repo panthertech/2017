@@ -16,6 +16,7 @@ public class NavModule implements Gyro, PIDSource {
 	public NavModule() {
 		try {
 			sensor = new AHRS(SerialPort.Port.kMXP);
+			sensor.setPIDSourceType(PIDSourceType.kDisplacement);
 		} catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
 		}
