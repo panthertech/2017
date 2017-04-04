@@ -16,10 +16,10 @@ public class Drive {
 	private static final double kDriveI = 0.00001;
 	private static final double kDriveD = 0.005;
 	private static final double kDriveTolerance = 5.0;
-	private static final double kTurnP = 0.004;
-	private static final double kTurnI = 0.000;
-	private static final double kTurnD = 0.05;
-	private static final double kTurnTolerance = 2.0;
+	private static final double kTurnP = 0.05;
+	private static final double kTurnI = 0.00001;
+	private static final double kTurnD = 0.3;
+	private static final double kTurnTolerance = 5.0;
 	
 	private RobotDrive robotDrive;
 	private CANTalon frontLeftTalon;
@@ -59,11 +59,11 @@ public class Drive {
 
 		drivePID = new PIDController(kDriveP, kDriveI, kDriveD, new DrivePIDSource(), new DrivePIDOutput(), 0.015);
 		drivePID.setAbsoluteTolerance(kDriveTolerance);
-		drivePID.setOutputRange(-0.5, 0.5);
+		drivePID.setOutputRange(-0.25, 0.2);
 		drivePID.reset();
 		turnPID = new PIDController(kTurnP, kTurnI, kTurnD, gyro, new TurnPIDOutput(), 0.015);
 		turnPID.setAbsoluteTolerance(kTurnTolerance);
-		turnPID.setOutputRange(-0.5, 0.5);
+		turnPID.setOutputRange(-0.25, 0.25);
 		turnPID.reset();
 	}
 
@@ -136,7 +136,7 @@ public class Drive {
 		drivePID.setSetpoint(distance + getDistance());
 		turnPID.setSetpoint(angle);
 		drivePID.enable();
-		turnPID.enable();
+		//turnPID.enable();
 	}
 	
 	public boolean onTargetDistance() {

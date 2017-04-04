@@ -4,8 +4,8 @@ import com.ctre.CANTalon;
 
 public class Climber {
 	private static final double kClimbSpeed = -1.0;
-	private static final double kMaintainSpeed = -0.25;
-	private static final double kDescendSpeed = 0.25;
+	private static final double kMaintainSpeed = 0.0;
+	private static final double kDescendSpeed = -0.5;
 	
 	private CANTalon climberTalon;
 	private boolean climbLast;

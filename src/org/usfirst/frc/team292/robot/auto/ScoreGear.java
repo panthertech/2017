@@ -10,9 +10,9 @@ public abstract class ScoreGear extends AutonomousMode {
 	public static final double kBoilerSideDriveOutDistance = 60.0;
 	public static final double kBoilerSideDriveToLiftDistance = 25.0;
 	
-	public static final double kLoadingSideDriveOutDistance = 60.0;
+	public static final double kLoadingSideDriveOutDistance = 55.0;
 	public static final double kLoadingSideDriveToLiftDistance = 40.0;
-	
+		
 	public static final double kLeftSideTurnAngle = 55.0;
 	public static final double kRightSideTurnAngle = -kLeftSideTurnAngle;
 	
